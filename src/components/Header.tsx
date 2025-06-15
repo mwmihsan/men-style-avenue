@@ -1,125 +1,161 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Phone } from 'lucide-react';
+import { Menu, X, Phone, MapPin, Facebook, Instagram } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
     setIsMenuOpen(false);
   };
 
-  const handleWhatsApp = () => {
-    window.open('https://wa.me/94778117375?text=Hello! I\'m interested in your men\'s wear collection.', '_blank');
-  };
-
   return (
-    <header className="fixed top-0 w-full bg-brand-dark/95 backdrop-blur-sm border-b border-brand-gray z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <h1 className="text-2xl md:text-3xl font-playfair font-bold text-gradient">
-              4Men
-            </h1>
-            <span className="text-sm text-brand-gold hidden md:block">Men's Wear</span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <button
-              onClick={() => scrollToSection('home')}
-              className="text-white hover:text-brand-gold transition-colors duration-300"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollToSection('about')}
-              className="text-white hover:text-brand-gold transition-colors duration-300"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection('products')}
-              className="text-white hover:text-brand-gold transition-colors duration-300"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollToSection('contact')}
-              className="text-white hover:text-brand-gold transition-colors duration-300"
-            >
-              Contact
-            </button>
-          </nav>
-
-          {/* Contact Info & WhatsApp */}
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-sm text-gray-300">
-              <Phone className="w-4 h-4" />
+    <>
+      {/* Top Info Bar */}
+      <div className="bg-brand-gold text-brand-dark py-2 px-4">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
+          <div className="flex items-center space-x-4 mb-2 sm:mb-0">
+            <div className="flex items-center space-x-1">
+              <Phone className="h-4 w-4" />
               <span>+94 77 811 7375</span>
             </div>
-            <Button onClick={handleWhatsApp} className="btn-gold">
-              WhatsApp
-            </Button>
+            <div className="flex items-center space-x-1">
+              <MapPin className="h-4 w-4" />
+              <span>237/2E, Matale Road, Akurana</span>
+            </div>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden flex flex-col space-y-1"
-          >
-            <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'opacity-0' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
-          </button>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs">Follow us:</span>
+            <a 
+              href="https://www.facebook.com/4MENAkurana/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Facebook className="h-4 w-4" />
+            </a>
+            <a 
+              href="https://www.instagram.com/4men_mens_wear?igsh=MWRpZ295bXJoanJsZw==" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Instagram className="h-4 w-4" />
+            </a>
+          </div>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-brand-gray">
-            <nav className="flex flex-col space-y-4 mt-4">
-              <button
+      {/* Main Header */}
+      <header className="bg-brand-dark/95 backdrop-blur-sm border-b border-brand-gold/20 sticky top-0 z-50">
+        <nav className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="text-2xl font-playfair font-bold text-gradient">
+              4MEN
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <button 
                 onClick={() => scrollToSection('home')}
-                className="text-left text-white hover:text-brand-gold transition-colors duration-300"
+                className="nav-link"
               >
                 Home
               </button>
-              <button
+              <button 
                 onClick={() => scrollToSection('about')}
-                className="text-left text-white hover:text-brand-gold transition-colors duration-300"
+                className="nav-link"
               >
                 About
               </button>
-              <button
+              <button 
                 onClick={() => scrollToSection('products')}
-                className="text-left text-white hover:text-brand-gold transition-colors duration-300"
+                className="nav-link"
               >
                 Products
               </button>
-              <button
+              <button 
+                onClick={() => scrollToSection('testimonials')}
+                className="nav-link"
+              >
+                Testimonials
+              </button>
+              <button 
                 onClick={() => scrollToSection('contact')}
-                className="text-left text-white hover:text-brand-gold transition-colors duration-300"
+                className="nav-link"
               >
                 Contact
               </button>
-              <div className="flex flex-col space-y-2 pt-4 border-t border-brand-gray">
-                <div className="flex items-center space-x-2 text-sm text-gray-300">
-                  <Phone className="w-4 h-4" />
-                  <span>+94 77 811 7375</span>
-                </div>
-                <Button onClick={handleWhatsApp} className="btn-gold w-full">
-                  Chat on WhatsApp
-                </Button>
-              </div>
-            </nav>
+              <a 
+                href="/admin"
+                className="nav-link text-brand-gold"
+              >
+                Admin
+              </a>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-white hover:bg-brand-gold/20"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
-        )}
-      </div>
-    </header>
+          
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t border-brand-gold/20">
+              <div className="flex flex-col space-y-4 pt-4">
+                <button 
+                  onClick={() => scrollToSection('home')}
+                  className="nav-link text-left"
+                >
+                  Home
+                </button>
+                <button 
+                  onClick={() => scrollToSection('about')}
+                  className="nav-link text-left"
+                >
+                  About
+                </button>
+                <button 
+                  onClick={() => scrollToSection('products')}
+                  className="nav-link text-left"
+                >
+                  Products
+                </button>
+                <button 
+                  onClick={() => scrollToSection('testimonials')}
+                  className="nav-link text-left"
+                >
+                  Testimonials
+                </button>
+                <button 
+                  onClick={() => scrollToSection('contact')}
+                  className="nav-link text-left"
+                >
+                  Contact
+                </button>
+                <a 
+                  href="/admin"
+                  className="nav-link text-left text-brand-gold"
+                >
+                  Admin
+                </a>
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+    </>
   );
 };
 
