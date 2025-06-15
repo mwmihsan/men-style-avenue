@@ -1,8 +1,8 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import ProductModal from './ProductModal';
+import ProductSearch from './ProductSearch';
 
 const ProductGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -95,6 +95,13 @@ const ProductGallery = () => {
     ]
   };
 
+  // Flatten all products for search
+  const allProducts = Object.entries(productData).flatMap(([category, products]) =>
+    products.map(product => ({ ...product, category }))
+  );
+
+  const categoryNames = categories.map(cat => cat.name);
+
   const handleViewProducts = (categoryName: string) => {
     setSelectedCategory(categoryName);
     setIsModalOpen(true);
@@ -120,6 +127,11 @@ const ProductGallery = () => {
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Discover our carefully curated selection of premium men's fashion
           </p>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="mb-12">
+          <ProductSearch allProducts={allProducts} categories={categoryNames} />
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
