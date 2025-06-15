@@ -140,7 +140,7 @@ const Orders = () => {
       <div className="px-4 py-6">
         {/* Mobile Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-white mb-2">Orders</h1>
+          <h1 className="text-2xl sm:text-3xl font-montserrat font-bold text-white mb-2">Orders</h1>
           <p className="text-gray-400 text-sm">Manage your customer orders</p>
         </div>
 
@@ -155,7 +155,7 @@ const Orders = () => {
             </DialogTrigger>
             <DialogContent className="w-[95vw] max-w-4xl h-[90vh] bg-brand-gray border-brand-gold/20 overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-white">Create New Order</DialogTitle>
+                <DialogTitle className="text-white font-montserrat">Create New Order</DialogTitle>
               </DialogHeader>
               <OrderForm onSubmit={addOrder} />
             </DialogContent>
