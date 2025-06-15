@@ -49,7 +49,7 @@ const InstallPWA = () => {
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center">
               <Download className="w-5 h-5 text-brand-gold mr-2" />
-              <h3 className="font-semibold text-white text-sm">Install App</h3>
+              <h3 className="font-semibold text-white text-sm font-montserrat">Install App</h3>
             </div>
             <Button
               variant="ghost"
@@ -60,7 +60,7 @@ const InstallPWA = () => {
               <X className="w-4 h-4" />
             </Button>
           </div>
-          <p className="text-gray-300 text-xs mb-3">
+          <p className="text-gray-300 text-xs mb-3 font-poppins">
             Install 4Men Men's Wear app for easy access and offline browsing
           </p>
           <Button

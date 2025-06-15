@@ -57,14 +57,14 @@ Could you please provide more details about availability, sizes, colors, and pri
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <Clock className="h-6 w-6 text-brand-gold" />
-            <h2 className="text-2xl font-playfair font-bold text-white">
+            <h2 className="text-2xl font-montserrat font-bold text-white">
               Recently Viewed
             </h2>
           </div>
           <Button 
             onClick={clearRecentlyViewed}
             variant="ghost"
-            className="text-gray-400 hover:text-white text-sm"
+            className="text-gray-400 hover:text-white text-sm font-poppins"
           >
             Clear All
           </Button>
@@ -85,11 +85,11 @@ Could you please provide more details about availability, sizes, colors, and pri
                 />
               </div>
               <CardContent className="p-3">
-                <h4 className="text-white text-sm font-medium mb-1 line-clamp-2">
+                <h4 className="text-white text-sm font-medium mb-1 line-clamp-2 font-poppins">
                   {product.name}
                 </h4>
                 {product.price && (
-                  <p className="text-brand-gold text-xs">{product.price}</p>
+                  <p className="text-brand-gold text-xs font-poppins">{product.price}</p>
                 )}
               </CardContent>
             </Card>

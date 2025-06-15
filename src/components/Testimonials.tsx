@@ -27,10 +27,10 @@ const Testimonials = () => {
     <section className="py-20 bg-brand-darker">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-gradient mb-6">
+          <h2 className="text-4xl md:text-5xl font-montserrat font-bold text-gradient mb-6">
             What Our Customers Say
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto font-poppins">
             Don't just take our word for it - hear from our satisfied customers
           </p>
         </div>
@@ -47,12 +47,12 @@ const Testimonials = () => {
                     <span key={i} className="text-brand-gold text-xl">★</span>
                   ))}
                 </div>
-                <p className="text-gray-300 mb-6 italic leading-relaxed">
+                <p className="text-gray-300 mb-6 italic leading-relaxed font-poppins">
                   "{testimonial.content}"
                 </p>
                 <div className="border-t border-brand-gold/20 pt-4">
-                  <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                  <p className="text-sm text-brand-gold">{testimonial.role}</p>
+                  <h4 className="font-semibold text-white font-montserrat">{testimonial.name}</h4>
+                  <p className="text-sm text-brand-gold font-poppins">{testimonial.role}</p>
                 </div>
               </CardContent>
             </Card>

@@ -20,13 +20,13 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <div className="animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-playfair font-bold mb-6">
+          <h1 className="text-5xl md:text-7xl font-montserrat font-bold mb-6">
             <span className="text-gradient">4Men</span>
             <br />
             <span className="text-white text-3xl md:text-5xl">Men's Wear</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-brand-gray-light mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-brand-gray-light mb-8 max-w-2xl mx-auto leading-relaxed font-poppins">
             Premium Range of Men's Collections
             <br className="hidden md:block" />
             Island wide and world wide delivery services available
@@ -45,7 +45,7 @@ const Hero = () => {
         {/* Promo Banner */}
         <div className="mt-12 animate-scale-in">
           <div className="bg-gradient-gold text-brand-navy px-6 py-3 rounded-full inline-block">
-            <p className="font-semibold">🎉 New Arrivals - Premium Collections Available!</p>
+            <p className="font-semibold font-poppins">🎉 New Arrivals - Premium Collections Available!</p>
           </div>
         </div>
       </div>

@@ -41,10 +41,10 @@ const InstagramFeed = () => {
     <section className="py-20 bg-brand-dark">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-gradient mb-6">
+          <h2 className="text-4xl md:text-5xl font-montserrat font-bold text-gradient mb-6">
             Follow Us on Instagram
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8 font-poppins">
             Stay updated with our latest collections and fashion trends
           </p>
           <Button 
@@ -80,10 +80,10 @@ const InstagramFeed = () => {
                 </div>
               </div>
               <CardContent className="p-4">
-                <p className="text-gray-300 text-sm mb-3 line-clamp-2">
+                <p className="text-gray-300 text-sm mb-3 line-clamp-2 font-poppins">
                   {post.caption}
                 </p>
-                <div className="flex justify-between items-center text-xs text-gray-400">
+                <div className="flex justify-between items-center text-xs text-gray-400 font-poppins">
                   <div className="flex space-x-4">
                     <span>❤️ {post.likes}</span>
                     <span>💬 {post.comments}</span>

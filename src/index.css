@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,11 +44,15 @@
   }
 
   body {
-    @apply bg-brand-navy text-foreground font-inter;
+    @apply bg-brand-navy text-foreground font-poppins;
   }
 
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-bold;
   }
 }
 
@@ -58,7 +62,7 @@
   }
   
   .btn-gold {
-    @apply bg-gradient-gold text-brand-navy font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-brand-gold/30;
+    @apply bg-gradient-gold text-brand-navy font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-brand-gold/30 font-montserrat;
   }
   
   .card-hover {
