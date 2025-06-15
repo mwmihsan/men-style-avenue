@@ -1,9 +1,17 @@
 
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, Facebook, Instagram } from 'lucide-react';
 
 const Footer = () => {
   const handleWhatsApp = () => {
-    window.open('https://wa.me/94712345678?text=Hello! I would like to get in touch.', '_blank');
+    window.open('https://wa.me/94778117375?text=Hello! I would like to get in touch.', '_blank');
+  };
+
+  const handleFacebook = () => {
+    window.open('https://www.facebook.com/4MENAkurana/', '_blank');
+  };
+
+  const handleInstagram = () => {
+    window.open('https://www.instagram.com/4men_mens_wear?igsh=MWRpZ295bXJoanJsZw==', '_blank');
   };
 
   const scrollToSection = (id: string) => {
@@ -21,18 +29,34 @@ const Footer = () => {
               4Men Men's Wear
             </h3>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Your premier destination for quality men's fashion in Akurana. 
-              We bring you the finest collection of formal, casual, and traditional wear.
+              Premium Range of Men's collections. Your premier destination for quality men's fashion in Akurana. 
+              Island wide and world wide delivery services available.
             </p>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 mb-4">
               <div className="flex items-center space-x-2 text-gray-300">
                 <MapPin className="w-4 h-4 text-brand-gold" />
-                <span>Main Street, Akurana, Sri Lanka</span>
+                <span>237/2E, Matale Road, Akurana (Opposite to Maysun Studio)</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <Phone className="w-4 h-4 text-brand-gold" />
-                <span>+94 71 234 5678</span>
+                <span>+94 77 811 7375</span>
               </div>
+            </div>
+            <div className="flex space-x-3">
+              <button 
+                onClick={handleFacebook}
+                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors flex items-center space-x-2"
+              >
+                <Facebook className="w-4 h-4" />
+                <span className="hidden sm:inline">Facebook</span>
+              </button>
+              <button 
+                onClick={handleInstagram}
+                className="bg-pink-600 hover:bg-pink-700 text-white p-2 rounded-lg transition-colors flex items-center space-x-2"
+              >
+                <Instagram className="w-4 h-4" />
+                <span className="hidden sm:inline">Instagram</span>
+              </button>
             </div>
           </div>
           
@@ -78,15 +102,15 @@ const Footer = () => {
           {/* Services */}
           <div>
             <h4 className="text-xl font-semibold text-white mb-4">Our Services</h4>
-            <ul className="space-y-2 text-gray-300">
-              <li>Custom Tailoring</li>
-              <li>Alteration Services</li>
-              <li>Style Consultation</li>
+            <ul className="space-y-2 text-gray-300 mb-4">
+              <li>Premium Men's Collections</li>
+              <li>Island Wide Delivery</li>
+              <li>World Wide Delivery</li>
               <li>WhatsApp Ordering</li>
             </ul>
             <button 
               onClick={handleWhatsApp}
-              className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
             >
               <span>💬</span>
               <span>Chat on WhatsApp</span>

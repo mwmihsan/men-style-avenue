@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 const Hero = () => {
   const handleWhatsApp = () => {
-    window.open('https://wa.me/94712345678?text=Hello! I\'d like to know more about your latest collection.', '_blank');
+    window.open('https://wa.me/94778117375?text=Hello! I\'d like to know more about your latest collection.', '_blank');
   };
 
   const scrollToProducts = () => {
@@ -31,9 +31,9 @@ const Hero = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Discover premium fashion for the modern gentleman. 
+            Premium Range of Men's Collections
             <br className="hidden md:block" />
-            Style, sophistication, and quality redefined.
+            Island wide and world wide delivery services available
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -56,7 +56,7 @@ const Hero = () => {
         {/* Promo Banner */}
         <div className="mt-12 animate-scale-in">
           <div className="bg-gradient-gold text-brand-dark px-6 py-3 rounded-full inline-block">
-            <p className="font-semibold">🎉 New Arrivals - Up to 30% Off Limited Time!</p>
+            <p className="font-semibold">🎉 New Arrivals - Premium Collections Available!</p>
           </div>
         </div>
       </div>

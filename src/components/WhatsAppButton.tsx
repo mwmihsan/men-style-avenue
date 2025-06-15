@@ -1,7 +1,7 @@
 
 const WhatsAppButton = () => {
   const handleWhatsApp = () => {
-    window.open('https://wa.me/94712345678?text=Hello! I would like to inquire about your products.', '_blank');
+    window.open('https://wa.me/94778117375?text=Hello! I would like to inquire about your products.', '_blank');
   };
 
   return (

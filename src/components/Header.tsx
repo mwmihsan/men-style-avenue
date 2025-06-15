@@ -13,7 +13,7 @@ const Header = () => {
   };
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/94712345678?text=Hello! I\'m interested in your men\'s wear collection.', '_blank');
+    window.open('https://wa.me/94778117375?text=Hello! I\'m interested in your men\'s wear collection.', '_blank');
   };
 
   return (
@@ -60,7 +60,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-gray-300">
               <Phone className="w-4 h-4" />
-              <span>+94 71 234 5678</span>
+              <span>+94 77 811 7375</span>
             </div>
             <Button onClick={handleWhatsApp} className="btn-gold">
               WhatsApp
@@ -109,7 +109,7 @@ const Header = () => {
               <div className="flex flex-col space-y-2 pt-4 border-t border-brand-gray">
                 <div className="flex items-center space-x-2 text-sm text-gray-300">
                   <Phone className="w-4 h-4" />
-                  <span>+94 71 234 5678</span>
+                  <span>+94 77 811 7375</span>
                 </div>
                 <Button onClick={handleWhatsApp} className="btn-gold w-full">
                   Chat on WhatsApp
