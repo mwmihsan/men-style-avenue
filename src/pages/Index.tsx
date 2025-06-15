@@ -20,14 +20,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       <Header />
-      <Hero />
-      <About />
-      <ProductGallery />
-      <RecentlyViewed />
-      <InstagramFeed />
-      <ShareButtons />
-      <Testimonials />
-      <Contact />
+      <main className="px-4 sm:px-6 lg:px-8">
+        <Hero />
+        <About />
+        <ProductGallery />
+        <RecentlyViewed />
+        <InstagramFeed />
+        <ShareButtons />
+        <Testimonials />
+        <Contact />
+      </main>
       <Footer />
       <WhatsAppButton />
       <InstallPWA />

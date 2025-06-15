@@ -1,24 +1,74 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Home, ArrowLeft, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="min-h-screen bg-brand-dark">
+      <Header />
+      
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="max-w-md mx-auto text-center">
+          <Card className="bg-brand-gray border-brand-gold/20 shadow-xl">
+            <CardContent className="p-8">
+              {/* 404 Visual */}
+              <div className="mb-6">
+                <div className="text-6xl sm:text-8xl font-bold text-brand-gold opacity-50 mb-4">404</div>
+                <div className="w-16 h-16 mx-auto bg-brand-gold/10 rounded-full flex items-center justify-center mb-4">
+                  <Search className="w-8 h-8 text-brand-gold" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-4 mb-8">
+                <h1 className="text-2xl font-playfair font-bold text-white">Page Not Found</h1>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  The page you're looking for doesn't exist or has been moved. 
+                  Let's get you back to where you need to be.
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-3">
+                <Link to="/" className="block">
+                  <Button className="btn-gold w-full h-12">
+                    <Home className="w-4 h-4 mr-2" />
+                    Go Home
+                  </Button>
+                </Link>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.history.back()}
+                  className="w-full h-12 border-brand-gold/20 text-white hover:bg-brand-gold/10"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Go Back
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Links */}
+          <div className="mt-8 space-y-2">
+            <p className="text-gray-400 text-sm">Or try these popular pages:</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Link to="/orders">
+                <Button variant="ghost" size="sm" className="text-brand-gold hover:bg-brand-gold/10">
+                  Orders
+                </Button>
+              </Link>
+              <Link to="/admin">
+                <Button variant="ghost" size="sm" className="text-brand-gold hover:bg-brand-gold/10">
+                  Admin
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
