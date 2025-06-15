@@ -8,10 +8,13 @@ import Hero from '@/components/Hero';
 import About from '@/components/About';
 import ProductGallery from '@/components/ProductGallery';
 import RecentlyViewed from '@/components/RecentlyViewed';
+import InstagramFeed from '@/components/InstagramFeed';
+import ShareButtons from '@/components/ShareButtons';
 import Testimonials from '@/components/Testimonials';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import InstallPWA from '@/components/InstallPWA';
 
 const Index = () => {
   return (
@@ -21,10 +24,13 @@ const Index = () => {
       <About />
       <ProductGallery />
       <RecentlyViewed />
+      <InstagramFeed />
+      <ShareButtons />
       <Testimonials />
       <Contact />
       <Footer />
       <WhatsAppButton />
+      <InstallPWA />
     </div>
   );
 };
