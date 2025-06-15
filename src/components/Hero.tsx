@@ -2,10 +2,6 @@
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
-  const handleWhatsApp = () => {
-    window.open('https://wa.me/94778117375?text=Hello! I\'d like to know more about your latest collection.', '_blank');
-  };
-
   const scrollToProducts = () => {
     const element = document.getElementById('products');
     element?.scrollIntoView({ behavior: 'smooth' });
@@ -17,7 +13,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.7)), url('https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1920&q=80')`
+          backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.7)), url('/lovable-uploads/3a0f5d9e-db53-453f-8006-1ee4430bbeee.png')`
         }}
       />
       
@@ -36,19 +32,12 @@ const Hero = () => {
             Island wide and world wide delivery services available
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex justify-center">
             <Button 
               onClick={scrollToProducts}
-              className="btn-gold text-lg px-8 py-4 w-full sm:w-auto"
+              className="btn-gold text-lg px-8 py-4"
             >
               Explore Collection
-            </Button>
-            <Button 
-              onClick={handleWhatsApp}
-              variant="outline"
-              className="border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark text-lg px-8 py-4 w-full sm:w-auto"
-            >
-              Chat on WhatsApp
             </Button>
           </div>
         </div>
