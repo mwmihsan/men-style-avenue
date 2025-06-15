@@ -13,7 +13,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.7)), url('/lovable-uploads/3a0f5d9e-db53-453f-8006-1ee4430bbeee.png')`
+          backgroundImage: `linear-gradient(rgba(10, 22, 40, 0.8), rgba(10, 22, 40, 0.8)), url('/lovable-uploads/3a0f5d9e-db53-453f-8006-1ee4430bbeee.png')`
         }}
       />
       
@@ -26,7 +26,7 @@ const Hero = () => {
             <span className="text-white text-3xl md:text-5xl">Men's Wear</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-brand-gray-light mb-8 max-w-2xl mx-auto leading-relaxed">
             Premium Range of Men's Collections
             <br className="hidden md:block" />
             Island wide and world wide delivery services available
@@ -44,7 +44,7 @@ const Hero = () => {
         
         {/* Promo Banner */}
         <div className="mt-12 animate-scale-in">
-          <div className="bg-gradient-gold text-brand-dark px-6 py-3 rounded-full inline-block">
+          <div className="bg-gradient-gold text-brand-navy px-6 py-3 rounded-full inline-block">
             <p className="font-semibold">🎉 New Arrivals - Premium Collections Available!</p>
           </div>
         </div>

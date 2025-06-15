@@ -30,7 +30,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-brand-dark/95 backdrop-blur-sm border-b border-brand-gold/20 sticky top-0 z-50">
+      <header className="bg-brand-navy/95 backdrop-blur-sm border-b border-brand-gold/20 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="text-2xl font-playfair font-bold text-brand-gold">

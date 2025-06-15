@@ -18,7 +18,7 @@ import InstallPWA from '@/components/InstallPWA';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-brand-dark text-white">
+    <div className="min-h-screen bg-brand-navy text-white">
       <Header />
       <main className="px-4 sm:px-6 lg:px-8">
         <Hero />

@@ -45,7 +45,7 @@ const AdminLogin = ({ isOpen, onClose, onSuccess }: AdminLoginProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-brand-gray border-brand-gold/20">
+      <DialogContent className="max-w-md bg-brand-navy-light border-brand-gold/20">
         <DialogHeader>
           <DialogTitle className="text-white text-center">
             <Lock className="w-6 h-6 mx-auto mb-2 text-brand-gold" />
@@ -69,7 +69,7 @@ const AdminLogin = ({ isOpen, onClose, onSuccess }: AdminLoginProps) => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="bg-brand-dark border-brand-gold/20 text-white"
+              className="bg-brand-navy border-brand-gold/20 text-white"
               placeholder="Enter username"
               required
             />
@@ -82,7 +82,7 @@ const AdminLogin = ({ isOpen, onClose, onSuccess }: AdminLoginProps) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-brand-dark border-brand-gold/20 text-white"
+              className="bg-brand-navy border-brand-gold/20 text-white"
               placeholder="Enter password"
               required
             />
@@ -107,7 +107,7 @@ const AdminLogin = ({ isOpen, onClose, onSuccess }: AdminLoginProps) => {
             </Button>
           </div>
           
-          <div className="text-center text-sm text-gray-400 mt-4">
+          <div className="text-center text-sm text-brand-gray-light mt-4">
             <p>Demo credentials:</p>
             <p>Username: admin | Password: admin123</p>
           </div>

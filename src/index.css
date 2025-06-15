@@ -6,32 +6,32 @@
 
 @layer base {
   :root {
-    --background: 10 10% 4%;
+    --background: 220 30% 8%;
     --foreground: 0 0% 95%;
 
-    --card: 10 10% 6%;
+    --card: 220 30% 10%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 10 10% 6%;
+    --popover: 220 30% 10%;
     --popover-foreground: 0 0% 95%;
 
     --primary: 45 100% 51%;
-    --primary-foreground: 10 10% 4%;
+    --primary-foreground: 220 30% 8%;
 
-    --secondary: 0 0% 10%;
+    --secondary: 220 30% 12%;
     --secondary-foreground: 0 0% 95%;
 
-    --muted: 0 0% 10%;
+    --muted: 220 30% 12%;
     --muted-foreground: 0 0% 65%;
 
-    --accent: 0 0% 15%;
+    --accent: 220 30% 15%;
     --accent-foreground: 0 0% 95%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 95%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
+    --border: 220 30% 15%;
+    --input: 220 30% 15%;
     --ring: 45 100% 51%;
 
     --radius: 0.5rem;
@@ -44,7 +44,7 @@
   }
 
   body {
-    @apply bg-brand-dark text-foreground font-inter;
+    @apply bg-brand-navy text-foreground font-inter;
   }
 
   html {
@@ -58,7 +58,7 @@
   }
   
   .btn-gold {
-    @apply bg-gradient-gold text-brand-dark font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105;
+    @apply bg-gradient-gold text-brand-navy font-semibold px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-brand-gold/30;
   }
   
   .card-hover {

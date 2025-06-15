@@ -63,15 +63,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom brand colors
+				// Custom brand colors for premium navy and gold theme
 				brand: {
-					dark: '#0a0a0a',
-					darker: '#050505',
+					navy: '#0a1628',
+					'navy-light': '#1e293b',
+					'navy-lighter': '#334155',
 					gold: '#d4af37',
 					'gold-light': '#f4e4a6',
-					gray: '#1a1a1a',
-					'gray-light': '#2a2a2a',
-					'gray-lighter': '#404040'
+					'gold-dark': '#b8941f',
+					gray: '#64748b',
+					'gray-light': '#94a3b8',
+					'gray-lighter': '#cbd5e1'
 				}
 			},
 			borderRadius: {
@@ -84,8 +86,8 @@ export default {
 				'inter': ['Inter', 'sans-serif'],
 			},
 			backgroundImage: {
-				'gradient-gold': 'linear-gradient(135deg, #d4af37 0%, #f4e4a6 100%)',
-				'gradient-dark': 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
+				'gradient-gold': 'linear-gradient(135deg, #d4af37 0%, #f4e4a6 50%, #d4af37 100%)',
+				'gradient-navy': 'linear-gradient(135deg, #0a1628 0%, #1e293b 100%)',
 			},
 			keyframes: {
 				'accordion-down': {

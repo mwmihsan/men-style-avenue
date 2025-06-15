@@ -7,12 +7,12 @@ import Header from '@/components/Header';
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-brand-navy">
       <Header />
       
       <div className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="max-w-md mx-auto text-center">
-          <Card className="bg-brand-gray border-brand-gold/20 shadow-xl">
+          <Card className="bg-brand-navy-light border-brand-gold/20 shadow-xl">
             <CardContent className="p-8">
               {/* 404 Visual */}
               <div className="mb-6">
@@ -25,7 +25,7 @@ const NotFound = () => {
               {/* Content */}
               <div className="space-y-4 mb-8">
                 <h1 className="text-2xl font-playfair font-bold text-white">Page Not Found</h1>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-brand-gray-light text-sm leading-relaxed">
                   The page you're looking for doesn't exist or has been moved. 
                   Let's get you back to where you need to be.
                 </p>
@@ -54,7 +54,7 @@ const NotFound = () => {
 
           {/* Quick Links */}
           <div className="mt-8 space-y-2">
-            <p className="text-gray-400 text-sm">Or try these popular pages:</p>
+            <p className="text-brand-gray-light text-sm">Or try these popular pages:</p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link to="/orders">
                 <Button variant="ghost" size="sm" className="text-brand-gold hover:bg-brand-gold/10">
