@@ -1,7 +1,15 @@
-
 import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import OrdersHeader from './OrdersManager/OrdersHeader';
 import OrdersList from './OrdersManager/OrdersList';
+import OrderForm from './OrderForm';
+
+interface OrderItem {
+  productName: string;
+  size: string;
+  quantity: number;
+  price: number;
+}
 
 interface Order {
   id: string;
@@ -15,10 +23,23 @@ interface Order {
   notes?: string;
 }
 
+interface OrderFormData {
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  deliveryAddress: string;
+  paymentMethod: string;
+  notes?: string;
+}
+
 const OrdersManager = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
 
   // Load orders from localStorage on component mount
   useEffect(() => {
@@ -82,6 +103,22 @@ const OrdersManager = () => {
     }
   };
 
+  const addOrder = (orderData: OrderFormData) => {
+    const newOrder: Order = {
+      id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
+      customerName: orderData.customerName,
+      customerPhone: orderData.customerPhone,
+      customerAddress: orderData.deliveryAddress,
+      products: orderData.items.map(item => `${item.productName} (${item.size})`).join(', '),
+      totalAmount: orderData.totalAmount,
+      status: orderData.status,
+      orderDate: new Date().toISOString().split('T')[0],
+      notes: orderData.notes
+    };
+    setOrders([newOrder, ...orders]);
+    setIsOrderFormOpen(false);
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -96,6 +133,7 @@ const OrdersManager = () => {
         setSearchTerm={setSearchTerm}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        onNewOrder={() => setIsOrderFormOpen(true)}
       />
       
       <OrdersList
@@ -103,6 +141,15 @@ const OrdersManager = () => {
         onStatusUpdate={updateOrderStatus}
         onDeleteOrder={deleteOrder}
       />
+
+      <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+        <DialogContent className="w-[95vw] max-w-4xl h-[90vh] bg-brand-gray border-brand-gold/20 overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-white font-playfair">Create New Order</DialogTitle>
+          </DialogHeader>
+          <OrderForm onSubmit={addOrder} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,21 +1,27 @@
 
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, Plus } from 'lucide-react';
 
 interface OrdersHeaderProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
+  onNewOrder: () => void;
 }
 
-const OrdersHeader = ({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }: OrdersHeaderProps) => {
+const OrdersHeader = ({ searchTerm, setSearchTerm, statusFilter, setStatusFilter, onNewOrder }: OrdersHeaderProps) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <h2 className="text-2xl font-playfair font-bold text-white">Order Management</h2>
         <div className="flex gap-2 w-full sm:w-auto">
+          <Button onClick={onNewOrder} className="btn-gold">
+            <Plus className="w-4 h-4 mr-2" />
+            New Order
+          </Button>
           <div className="relative flex-1 sm:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
