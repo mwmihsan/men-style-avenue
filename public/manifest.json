@@ -1,0 +1,19 @@
+
+{
+  "name": "4Men Men's Wear",
+  "short_name": "4Men",
+  "description": "Premium men's fashion in Akurana",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["shopping", "fashion", "lifestyle"]
+}
