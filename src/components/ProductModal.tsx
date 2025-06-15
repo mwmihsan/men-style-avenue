@@ -1,10 +1,11 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Ruler } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SizeGuide from './SizeGuide';
+import ProductReviews from './ProductReviews';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 
 interface Product {
   id: string;
@@ -22,8 +23,20 @@ interface ProductModalProps {
 
 const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps) => {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showReviews, setShowReviews] = useState(false);
+  const { addToRecentlyViewed } = useRecentlyViewed();
 
   const handleProductSelect = (product: Product) => {
+    // Add to recently viewed
+    addToRecentlyViewed({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      category: category
+    });
+
     const message = `Hello! I'm interested in this ${category} item:
 
 Product: ${product.name}
@@ -32,6 +45,11 @@ ${product.price ? `Price Range: ${product.price}` : ''}
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
     window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleViewReviews = (product: Product) => {
+    setSelectedProduct(product);
+    setShowReviews(true);
   };
 
   const handleCategoryInquiry = () => {
@@ -47,6 +65,34 @@ Could you please provide more details about availability, sizes, colors, and pri
     'Round Neck T-Shirts',
     'Long-Sleeved T-Shirts'
   ].includes(category);
+
+  if (showReviews && selectedProduct) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-gray border-brand-gold/20">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-playfair font-bold text-white flex items-center justify-between">
+              {selectedProduct.name} - Reviews
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowReviews(false)}
+                  className="text-brand-gold hover:bg-brand-gold/20"
+                >
+                  Back to Products
+                </Button>
+                <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-brand-gold/20">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <ProductReviews productId={selectedProduct.id} productName={selectedProduct.name} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <>
@@ -89,7 +135,7 @@ Could you please provide more details about availability, sizes, colors, and pri
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             {products.map((product) => (
-              <Card key={product.id} className="bg-brand-dark border-brand-gold/20 overflow-hidden group cursor-pointer hover:border-brand-gold/40 transition-all">
+              <Card key={product.id} className="bg-brand-dark border-brand-gold/20 overflow-hidden group">
                 <div className="relative h-48 overflow-hidden">
                   <img 
                     src={product.image}
@@ -102,12 +148,21 @@ Could you please provide more details about availability, sizes, colors, and pri
                   {product.price && (
                     <p className="text-brand-gold text-sm mb-3">{product.price}</p>
                   )}
-                  <Button 
-                    onClick={() => handleProductSelect(product)}
-                    className="w-full bg-brand-gold text-brand-dark hover:bg-brand-gold/90 transition-colors text-sm"
-                  >
-                    Inquire via WhatsApp
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      onClick={() => handleProductSelect(product)}
+                      className="w-full bg-brand-gold text-brand-dark hover:bg-brand-gold/90 transition-colors text-sm"
+                    >
+                      Inquire via WhatsApp
+                    </Button>
+                    <Button 
+                      onClick={() => handleViewReviews(product)}
+                      variant="outline"
+                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-sm"
+                    >
+                      View Reviews
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
