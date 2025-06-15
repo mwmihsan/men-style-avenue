@@ -1,14 +1,29 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, Package, TrendingUp, DollarSign, Eye, Settings, BarChart3 } from 'lucide-react';
+import { Users, Package, TrendingUp, DollarSign, Eye, Settings, BarChart3, ShoppingCart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import AdminPanel from '@/components/AdminPanel';
+import OrdersManager from '@/components/OrdersManager';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const { isAdminAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated) {
+      navigate('/');
+    }
+  }, [isAdminAuthenticated, navigate]);
+
+  if (!isAdminAuthenticated) {
+    return null;
+  }
 
   const stats = [
     { title: 'Total Orders', value: '247', change: '+12%', icon: Package, color: 'text-blue-400' },
@@ -49,16 +64,28 @@ const Admin = () => {
             Overview
           </Button>
           <Button
-            variant={activeTab === 'management' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('management')}
+            variant={activeTab === 'orders' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('orders')}
             className={`min-w-fit px-4 py-2 text-sm ${
-              activeTab === 'management' 
+              activeTab === 'orders' 
+                ? 'btn-gold' 
+                : 'border-brand-gold/20 text-white hover:bg-brand-gold/10'
+            }`}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Orders
+          </Button>
+          <Button
+            variant={activeTab === 'products' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('products')}
+            className={`min-w-fit px-4 py-2 text-sm ${
+              activeTab === 'products' 
                 ? 'btn-gold' 
                 : 'border-brand-gold/20 text-white hover:bg-brand-gold/10'
             }`}
           >
             <Settings className="w-4 h-4 mr-2" />
-            Management
+            Products
           </Button>
         </div>
 
@@ -123,6 +150,7 @@ const Admin = () => {
                 <Button 
                   variant="outline" 
                   className="w-full mt-4 border-brand-gold/20 text-white hover:bg-brand-gold/10"
+                  onClick={() => setActiveTab('orders')}
                 >
                   <Eye className="w-4 h-4 mr-2" />
                   View All Orders
@@ -132,7 +160,13 @@ const Admin = () => {
           </div>
         )}
 
-        {activeTab === 'management' && (
+        {activeTab === 'orders' && (
+          <div className="space-y-6">
+            <OrdersManager />
+          </div>
+        )}
+
+        {activeTab === 'products' && (
           <div className="space-y-6">
             <AdminPanel />
           </div>
