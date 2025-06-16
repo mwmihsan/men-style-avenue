@@ -2,115 +2,95 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Filter } from 'lucide-react';
+import { Plus, Filter, Loader2 } from 'lucide-react';
 import OrderCard from '@/components/OrderCard';
 import OrderFilters from '@/components/OrderFilters';
 import EmptyOrdersState from '@/components/EmptyOrdersState';
 import OrderForm from '@/components/OrderForm';
 import Header from '@/components/Header';
-
-interface OrderItem {
-  productName: string;
-  size: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  orderDate: string;
-  deliveryAddress: string;
-  paymentMethod: string;
-  notes?: string;
-}
+import { useOrders, Order, OrderFormData } from '@/hooks/useOrders';
+import { useToast } from '@/hooks/use-toast';
 
 const Orders = () => {
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: 'ORD-001',
-      customerName: 'Ahmed Hassan',
-      customerPhone: '+94 77 123 4567',
-      customerEmail: 'ahmed@email.com',
-      items: [
-        { productName: 'Classic White Dress Shirt', size: 'L', quantity: 2, price: 3500 },
-        { productName: 'Navy Polo Shirt', size: 'M', quantity: 1, price: 2200 }
-      ],
-      totalAmount: 9200,
-      status: 'confirmed',
-      orderDate: '2024-06-14',
-      deliveryAddress: 'No. 123, Main Street, Akurana',
-      paymentMethod: 'Cash on Delivery'
-    },
-    {
-      id: 'ORD-002',
-      customerName: 'Kamal Silva',
-      customerPhone: '+94 77 987 6543',
-      customerEmail: 'kamal@email.com',
-      items: [
-        { productName: 'Denim Trousers', size: '32', quantity: 1, price: 4500 }
-      ],
-      totalAmount: 4500,
-      status: 'processing',
-      orderDate: '2024-06-13',
-      deliveryAddress: 'No. 456, Temple Road, Kandy',
-      paymentMethod: 'Bank Transfer'
-    },
-    {
-      id: 'ORD-003',
-      customerName: 'Nimal Perera',
-      customerPhone: '+94 77 555 1234',
-      customerEmail: 'nimal@email.com',
-      items: [
-        { productName: 'Cotton T-Shirt', size: 'L', quantity: 3, price: 1800 }
-      ],
-      totalAmount: 5400,
-      status: 'shipped',
-      orderDate: '2024-06-12',
-      deliveryAddress: 'No. 789, Lake View Road, Matale',
-      paymentMethod: 'Mobile Payment'
-    }
-  ]);
-
+  const { orders, loading, addOrder, updateOrderStatus } = useOrders();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
+    const success = await updateOrderStatus(orderId, newStatus);
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Order status updated successfully"
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to update order status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleAddOrder = async (orderData: OrderFormData) => {
+    const success = await addOrder(orderData);
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Order created successfully"
+      });
+      setIsOrderFormOpen(false);
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to create order",
+        variant: "destructive"
+      });
+    }
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customerPhone.includes(searchTerm);
+    const matchesSearch = order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.customer_phone.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const addOrder = (orderData: Omit<Order, 'id' | 'orderDate'>) => {
-    const newOrder: Order = {
-      ...orderData,
-      id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
-      orderDate: new Date().toISOString().split('T')[0]
-    };
-    setOrders([newOrder, ...orders]);
-    setIsOrderFormOpen(false);
-  };
+  // Convert orders to the format expected by OrderCard
+  const formattedOrders = filteredOrders.map(order => ({
+    id: order.id,
+    customerName: order.customer_name,
+    customerPhone: order.customer_phone,
+    customerEmail: order.customer_email,
+    items: order.items,
+    totalAmount: order.total_amount,
+    status: order.status,
+    orderDate: order.created_at.split('T')[0],
+    deliveryAddress: order.customer_address,
+    paymentMethod: order.payment_method,
+    notes: order.notes
+  }));
 
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('all');
     setShowFilters(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-brand-dark">
+        <Header />
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-brand-dark">
@@ -136,7 +116,7 @@ const Orders = () => {
               <DialogHeader>
                 <DialogTitle className="text-white font-montserrat">Create New Order</DialogTitle>
               </DialogHeader>
-              <OrderForm onSubmit={addOrder} />
+              <OrderForm onSubmit={handleAddOrder} />
             </DialogContent>
           </Dialog>
 
@@ -162,17 +142,17 @@ const Orders = () => {
 
         {/* Mobile Order Cards */}
         <div className="space-y-4">
-          {filteredOrders.map((order) => (
+          {formattedOrders.map((order) => (
             <OrderCard
               key={order.id}
               order={order}
-              onStatusUpdate={updateOrderStatus}
+              onStatusUpdate={handleUpdateOrderStatus}
             />
           ))}
         </div>
 
         {/* Empty State */}
-        {filteredOrders.length === 0 && (
+        {formattedOrders.length === 0 && (
           <EmptyOrdersState onClearFilters={clearFilters} />
         )}
       </div>

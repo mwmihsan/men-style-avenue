@@ -1,130 +1,98 @@
-import { useState, useEffect } from 'react';
+
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2 } from 'lucide-react';
 import OrdersHeader from './OrdersManager/OrdersHeader';
 import OrdersList from './OrdersManager/OrdersList';
 import OrderForm from './OrderForm';
-
-interface OrderItem {
-  productName: string;
-  size: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  customerAddress: string;
-  products: string;
-  totalAmount: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  orderDate: string;
-  notes?: string;
-}
-
-interface OrderFormData {
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  deliveryAddress: string;
-  paymentMethod: string;
-  notes?: string;
-}
+import { useOrders, Order, OrderFormData } from '@/hooks/useOrders';
+import { useToast } from '@/hooks/use-toast';
 
 const OrdersManager = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { orders, loading, addOrder, updateOrderStatus, deleteOrder } = useOrders();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
 
-  // Load orders from localStorage on component mount
-  useEffect(() => {
-    const savedOrders = localStorage.getItem('4men_orders');
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
+    const success = await updateOrderStatus(orderId, newStatus);
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Order status updated successfully"
+      });
     } else {
-      // Sample data for demonstration
-      const sampleOrders: Order[] = [
-        {
-          id: 'ORD-001',
-          customerName: 'Ahmed Hassan',
-          customerPhone: '+94 77 123 4567',
-          customerAddress: 'No. 123, Main Street, Colombo 07',
-          products: 'Classic White Dress Shirt (L), Navy Polo Shirt (M)',
-          totalAmount: 9200,
-          status: 'confirmed',
-          orderDate: '2024-06-14',
-          notes: 'Customer requested express delivery'
-        },
-        {
-          id: 'ORD-002',
-          customerName: 'Kamal Silva',
-          customerPhone: '+94 71 987 6543',
-          customerAddress: 'No. 456, Lake Road, Kandy',
-          products: 'Denim Jeans (32), Cotton T-Shirt (L)',
-          totalAmount: 4500,
-          status: 'processing',
-          orderDate: '2024-06-13'
-        },
-        {
-          id: 'ORD-003',
-          customerName: 'Nimal Perera',
-          customerPhone: '+94 76 555 1234',
-          customerAddress: 'No. 789, Beach Road, Galle',
-          products: 'Formal Shirt (M), Dress Pants (30)',
-          totalAmount: 5400,
-          status: 'shipped',
-          orderDate: '2024-06-12'
-        }
-      ];
-      setOrders(sampleOrders);
-      localStorage.setItem('4men_orders', JSON.stringify(sampleOrders));
+      toast({
+        title: "Error",
+        description: "Failed to update order status",
+        variant: "destructive"
+      });
     }
-  }, []);
-
-  // Save orders to localStorage whenever orders change
-  useEffect(() => {
-    localStorage.setItem('4men_orders', JSON.stringify(orders));
-  }, [orders]);
-
-  const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
   };
 
-  const deleteOrder = (orderId: string) => {
+  const handleDeleteOrder = async (orderId: string) => {
     if (confirm('Are you sure you want to delete this order?')) {
-      setOrders(orders.filter(order => order.id !== orderId));
+      const success = await deleteOrder(orderId);
+      if (success) {
+        toast({
+          title: "Success",
+          description: "Order deleted successfully"
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete order",
+          variant: "destructive"
+        });
+      }
     }
   };
 
-  const addOrder = (orderData: OrderFormData) => {
-    const newOrder: Order = {
-      id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
-      customerName: orderData.customerName,
-      customerPhone: orderData.customerPhone,
-      customerAddress: orderData.deliveryAddress,
-      products: orderData.items.map(item => `${item.productName} (${item.size})`).join(', '),
-      totalAmount: orderData.totalAmount,
-      status: orderData.status,
-      orderDate: new Date().toISOString().split('T')[0],
-      notes: orderData.notes
-    };
-    setOrders([newOrder, ...orders]);
-    setIsOrderFormOpen(false);
+  const handleAddOrder = async (orderData: OrderFormData) => {
+    const success = await addOrder(orderData);
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Order created successfully"
+      });
+      setIsOrderFormOpen(false);
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to create order",
+        variant: "destructive"
+      });
+    }
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.order_number.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // Convert orders to the format expected by OrdersList
+  const formattedOrders = filteredOrders.map(order => ({
+    id: order.id,
+    customerName: order.customer_name,
+    customerPhone: order.customer_phone,
+    customerAddress: order.customer_address,
+    products: order.items.map(item => `${item.productName} (${item.size})`).join(', '),
+    totalAmount: order.total_amount,
+    status: order.status,
+    orderDate: order.created_at.split('T')[0],
+    notes: order.notes
+  }));
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -137,9 +105,9 @@ const OrdersManager = () => {
       />
       
       <OrdersList
-        orders={filteredOrders}
-        onStatusUpdate={updateOrderStatus}
-        onDeleteOrder={deleteOrder}
+        orders={formattedOrders}
+        onStatusUpdate={handleUpdateOrderStatus}
+        onDeleteOrder={handleDeleteOrder}
       />
 
       <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
@@ -147,7 +115,7 @@ const OrdersManager = () => {
           <DialogHeader>
             <DialogTitle className="text-white font-playfair">Create New Order</DialogTitle>
           </DialogHeader>
-          <OrderForm onSubmit={addOrder} />
+          <OrderForm onSubmit={handleAddOrder} />
         </DialogContent>
       </Dialog>
     </div>
