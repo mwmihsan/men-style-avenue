@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Edit, Trash2, Plus, Loader2 } from 'lucide-react';
 import { useProducts, Product, ProductFormData } from '@/hooks/useProducts';
 import { useToast } from '@/hooks/use-toast';
+import ImageUpload from './ImageUpload';
 
 const AdminPanel = () => {
   const { products, loading, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -193,9 +194,9 @@ const AdminPanel = () => {
 
       {/* Edit/Add Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-2xl bg-brand-gray border-brand-gold/20">
+        <DialogContent className="max-w-2xl bg-brand-gray border-brand-gold/20 text-white">
           <DialogHeader>
-            <DialogTitle className="text-white">
+            <DialogTitle className="text-white font-playfair">
               {editingProduct ? 'Edit Product' : 'Add New Product'}
             </DialogTitle>
           </DialogHeader>
@@ -203,49 +204,45 @@ const AdminPanel = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name" className="text-white">Product Name</Label>
+                <Label htmlFor="name" className="text-white">Product Name *</Label>
                 <Input
                   id="name"
                   value={formData.name || ''}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="bg-brand-dark border-brand-gold/20 text-white"
+                  className="bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
+                  placeholder="Enter product name"
                 />
               </div>
               
               <div>
-                <Label htmlFor="category" className="text-white">Category</Label>
+                <Label htmlFor="category" className="text-white">Category *</Label>
                 <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
                   <SelectTrigger className="bg-brand-dark border-brand-gold/20 text-white">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-brand-gray border-brand-gold/20">
                     {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      <SelectItem key={cat} value={cat} className="text-white hover:bg-brand-dark">{cat}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label htmlFor="price" className="text-white">Price</Label>
+                <Label htmlFor="price" className="text-white">Price Range *</Label>
                 <Input
                   id="price"
                   value={formData.price || ''}
                   onChange={(e) => setFormData({...formData, price: e.target.value})}
                   placeholder="Rs. 1,500 - 2,500"
-                  className="bg-brand-dark border-brand-gold/20 text-white"
+                  className="bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
                 />
               </div>
               
-              <div>
-                <Label htmlFor="image" className="text-white">Image URL</Label>
-                <Input
-                  id="image"
-                  value={formData.image || ''}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  className="bg-brand-dark border-brand-gold/20 text-white"
-                />
-              </div>
+              <ImageUpload
+                currentImage={formData.image}
+                onImageUploaded={(url) => setFormData({...formData, image: url})}
+              />
             </div>
             
             <div className="space-y-4">
@@ -255,7 +252,8 @@ const AdminPanel = () => {
                   id="description"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="bg-brand-dark border-brand-gold/20 text-white"
+                  className="bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
+                  placeholder="Enter product description"
                   rows={3}
                 />
               </div>
@@ -266,8 +264,9 @@ const AdminPanel = () => {
                     id="outOfStock"
                     checked={formData.isOutOfStock || false}
                     onCheckedChange={(checked) => setFormData({...formData, isOutOfStock: checked as boolean})}
+                    className="border-brand-gold/20"
                   />
-                  <Label htmlFor="outOfStock" className="text-white">Out of Stock</Label>
+                  <Label htmlFor="outOfStock" className="text-white cursor-pointer">Out of Stock</Label>
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -275,8 +274,9 @@ const AdminPanel = () => {
                     id="newArrival"
                     checked={formData.isNewArrival || false}
                     onCheckedChange={(checked) => setFormData({...formData, isNewArrival: checked as boolean})}
+                    className="border-brand-gold/20"
                   />
-                  <Label htmlFor="newArrival" className="text-white">New Arrival</Label>
+                  <Label htmlFor="newArrival" className="text-white cursor-pointer">New Arrival</Label>
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -284,8 +284,9 @@ const AdminPanel = () => {
                     id="hasOffer"
                     checked={formData.hasOffer || false}
                     onCheckedChange={(checked) => setFormData({...formData, hasOffer: checked as boolean})}
+                    className="border-brand-gold/20"
                   />
-                  <Label htmlFor="hasOffer" className="text-white">Has Offer</Label>
+                  <Label htmlFor="hasOffer" className="text-white cursor-pointer">Has Offer</Label>
                 </div>
                 
                 {formData.hasOffer && (
@@ -296,7 +297,7 @@ const AdminPanel = () => {
                       value={formData.offerText || ''}
                       onChange={(e) => setFormData({...formData, offerText: e.target.value})}
                       placeholder="20% OFF, Buy 1 Get 1, etc."
-                      className="bg-brand-dark border-brand-gold/20 text-white"
+                      className="bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
                     />
                   </div>
                 )}
@@ -305,7 +306,12 @@ const AdminPanel = () => {
           </div>
           
           <div className="flex justify-end space-x-2 mt-6">
-            <Button variant="outline" onClick={() => setIsEditModalOpen(false)} disabled={submitting}>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditModalOpen(false)} 
+              disabled={submitting}
+              className="border-brand-gold/20 text-white hover:bg-brand-gold/10"
+            >
               Cancel
             </Button>
             <Button onClick={handleSave} className="btn-gold" disabled={submitting}>
