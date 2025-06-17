@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,6 +28,18 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
   const [showReviews, setShowReviews] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
 
+  // Convert price range to single price display
+  const formatPrice = (price: string) => {
+    const priceNumbers = price.match(/\d+/g);
+    if (priceNumbers && priceNumbers.length > 0) {
+      const minPrice = parseInt(priceNumbers[0]);
+      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
+      const avgPrice = Math.round((minPrice + maxPrice) / 2);
+      return `Rs. ${avgPrice.toLocaleString()}`;
+    }
+    return price;
+  };
+
   const handleProductSelect = (product: Product) => {
     // Add to recently viewed
     addToRecentlyViewed({
@@ -40,7 +53,7 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
     const message = `Hello! I'm interested in this ${category} item:
 
 Product: ${product.name}
-${product.price ? `Price Range: ${product.price}` : ''}
+${product.price ? `Price: ${formatPrice(product.price)}` : ''}
 
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
@@ -99,7 +112,7 @@ Could you please provide more details about availability, sizes, colors, and pri
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-gray border-brand-gold/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-playfair font-bold text-white flex items-center justify-between">
+            <DialogTitle className="text-xl md:text-2xl font-playfair font-bold text-white flex items-center justify-between">
               {category}
               <div className="flex items-center gap-2">
                 {showSizeGuide && (
@@ -133,32 +146,33 @@ Could you please provide more details about availability, sizes, colors, and pri
             </div>
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          {/* Updated grid: 2 columns on mobile, 3 on larger screens */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mt-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-brand-dark border-brand-gold/20 overflow-hidden group">
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-32 md:h-48 overflow-hidden">
                   <img 
                     src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <CardContent className="p-4">
-                  <h4 className="text-white font-medium mb-2">{product.name}</h4>
+                <CardContent className="p-2 md:p-4">
+                  <h4 className="text-white font-medium mb-2 text-xs md:text-sm line-clamp-2">{product.name}</h4>
                   {product.price && (
-                    <p className="text-brand-gold text-sm mb-3">{product.price}</p>
+                    <p className="text-brand-gold text-xs md:text-sm mb-3 font-semibold">{formatPrice(product.price)}</p>
                   )}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5 md:space-y-2">
                     <Button 
                       onClick={() => handleProductSelect(product)}
-                      className="w-full bg-brand-gold text-brand-dark hover:bg-brand-gold/90 transition-colors text-sm"
+                      className="w-full bg-brand-gold text-brand-dark hover:bg-brand-gold/90 transition-colors text-xs md:text-sm py-1.5 md:py-2"
                     >
                       Inquire via WhatsApp
                     </Button>
                     <Button 
                       onClick={() => handleViewReviews(product)}
                       variant="outline"
-                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-sm"
+                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm py-1.5 md:py-2"
                     >
                       View Reviews
                     </Button>
@@ -171,7 +185,7 @@ Could you please provide more details about availability, sizes, colors, and pri
           <div className="mt-6 text-center border-t border-brand-gold/20 pt-6">
             <Button 
               onClick={handleCategoryInquiry}
-              className="btn-gold px-8 py-3"
+              className="btn-gold px-6 md:px-8 py-2 md:py-3"
             >
               Ask About Entire {category} Collection
             </Button>
