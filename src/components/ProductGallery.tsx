@@ -10,16 +10,22 @@ const ProductGallery = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { products, loading } = useProducts();
 
-  // Convert price range to single price display
-  const formatPrice = (price: string) => {
-    const priceNumbers = price.match(/\d+/g);
-    if (priceNumbers && priceNumbers.length > 0) {
-      const minPrice = parseInt(priceNumbers[0]);
-      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
-      const avgPrice = Math.round((minPrice + maxPrice) / 2);
-      return `Rs. ${avgPrice.toLocaleString()}`;
+  // Enhanced price formatting function
+  const formatPrice = (price?: string) => {
+    if (!price) return 'Contact for Price';
+    
+    // If already formatted as "Rs. X", return as is
+    if (price.includes('Rs.')) {
+      const priceNumbers = price.match(/\d+/g);
+      if (priceNumbers && priceNumbers.length > 0) {
+        const avgPrice = parseInt(priceNumbers[0]);
+        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
+      }
     }
-    return price;
+    
+    // If it's just a number, format it
+    const numPrice = parseInt(price.toString());
+    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
   };
 
   // Group products by category
@@ -80,7 +86,7 @@ const ProductGallery = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
               <Card key={i} className="bg-brand-gray border-brand-gold/20 animate-pulse">
-                <div className="h-32 md:h-48 lg:h-64 bg-gray-700 rounded-t-lg"></div>
+                <div className="aspect-square bg-gray-700 rounded-t-lg"></div>
                 <CardContent className="p-3 md:p-4 lg:p-6">
                   <div className="h-4 md:h-6 bg-gray-700 rounded mb-2 md:mb-3"></div>
                   <div className="h-3 md:h-4 bg-gray-700 rounded mb-4 md:mb-6"></div>
@@ -140,11 +146,11 @@ const ProductGallery = () => {
                 key={index} 
                 className="bg-brand-gray border-brand-gold/20 overflow-hidden card-hover group"
               >
-                <div className="relative h-32 md:h-48 lg:h-64 overflow-hidden">
+                <div className="relative aspect-[4/5] overflow-hidden">
                   <img 
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110 rounded-t-lg"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent" />
                   <div className="absolute top-2 md:top-3 right-2 md:right-3 bg-brand-gold text-brand-dark px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold">

@@ -28,6 +28,24 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
 
+  // Enhanced price formatting function
+  const formatPrice = (price?: string) => {
+    if (!price) return 'Contact for Price';
+    
+    // If already formatted as "Rs. X", return as is
+    if (price.includes('Rs.')) {
+      const priceNumbers = price.match(/\d+/g);
+      if (priceNumbers && priceNumbers.length > 0) {
+        const avgPrice = parseInt(priceNumbers[0]);
+        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
+      }
+    }
+    
+    // If it's just a number, format it
+    const numPrice = parseInt(price.toString());
+    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
+  };
+
   // Filter products based on search and filters
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) => {
@@ -68,18 +86,6 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
     });
   }, [allProducts, searchTerm, selectedCategory, priceRange]);
 
-  // Convert price range to single price display
-  const formatPrice = (price: string) => {
-    const priceNumbers = price.match(/\d+/g);
-    if (priceNumbers && priceNumbers.length > 0) {
-      const minPrice = parseInt(priceNumbers[0]);
-      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
-      const avgPrice = Math.round((minPrice + maxPrice) / 2);
-      return `Rs. ${avgPrice.toLocaleString()}`;
-    }
-    return price;
-  };
-
   const handleClearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
@@ -90,10 +96,11 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
     // Add to recently viewed
     addToRecentlyViewed(product);
 
+    const formattedPrice = formatPrice(product.price);
     const message = `Hello! I'm interested in this ${product.category} item:
 
 Product: ${product.name}
-${product.price ? `Price: ${formatPrice(product.price)}` : ''}
+${product.price ? `Price: ${formattedPrice}` : ''}
 
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
@@ -150,11 +157,11 @@ Could you please provide more details about availability, sizes, colors, and pri
                   className="bg-brand-gray border-brand-gold/20 overflow-hidden group cursor-pointer hover:border-brand-gold/40 transition-all hover:shadow-lg hover:shadow-brand-gold/10"
                   onClick={() => handleProductClick(product)}
                 >
-                  <div className="relative h-24 sm:h-32 md:h-40 lg:h-48 overflow-hidden">
+                  <div className="relative aspect-square overflow-hidden">
                     <img 
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 rounded-t-lg"
                     />
                     <div className="absolute top-1 right-1 md:top-2 md:right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button className="bg-brand-gold/20 backdrop-blur-sm p-1 md:p-1.5 rounded-full text-brand-gold hover:bg-brand-gold/30 transition-colors">
@@ -169,17 +176,15 @@ Could you please provide more details about availability, sizes, colors, and pri
                     <p className="text-brand-gold text-xs mb-1">
                       {product.category}
                     </p>
-                    {product.price && (
-                      <div className="flex items-center justify-between">
-                        <p className="text-gray-300 text-xs md:text-sm font-semibold">
-                          {formatPrice(product.price)}
-                        </p>
-                        <div className="flex items-center text-brand-gold">
-                          <Star className="w-2 h-2 md:w-3 md:h-3 fill-current" />
-                          <span className="text-xs ml-1">4.5</span>
-                        </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-gray-300 text-xs md:text-sm font-semibold">
+                        {formatPrice(product.price)}
+                      </p>
+                      <div className="flex items-center text-brand-gold">
+                        <Star className="w-2 h-2 md:w-3 md:h-3 fill-current" />
+                        <span className="text-xs ml-1">4.5</span>
                       </div>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
               ))}

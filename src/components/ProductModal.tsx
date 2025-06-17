@@ -28,16 +28,22 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
   const [showReviews, setShowReviews] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
 
-  // Convert price range to single price display
-  const formatPrice = (price: string) => {
-    const priceNumbers = price.match(/\d+/g);
-    if (priceNumbers && priceNumbers.length > 0) {
-      const minPrice = parseInt(priceNumbers[0]);
-      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
-      const avgPrice = Math.round((minPrice + maxPrice) / 2);
-      return `Rs. ${avgPrice.toLocaleString()}`;
+  // Enhanced price formatting function
+  const formatPrice = (price?: string) => {
+    if (!price) return 'Contact for Price';
+    
+    // If already formatted as "Rs. X", return as is
+    if (price.includes('Rs.')) {
+      const priceNumbers = price.match(/\d+/g);
+      if (priceNumbers && priceNumbers.length > 0) {
+        const avgPrice = parseInt(priceNumbers[0]);
+        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
+      }
     }
-    return price;
+    
+    // If it's just a number, format it
+    const numPrice = parseInt(price.toString());
+    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
   };
 
   const handleProductSelect = (product: Product) => {
@@ -50,10 +56,11 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
       category: category
     });
 
+    const formattedPrice = formatPrice(product.price);
     const message = `Hello! I'm interested in this ${category} item:
 
 Product: ${product.name}
-${product.price ? `Price: ${formatPrice(product.price)}` : ''}
+${product.price ? `Price: ${formattedPrice}` : ''}
 
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
@@ -146,22 +153,20 @@ Could you please provide more details about availability, sizes, colors, and pri
             </div>
           )}
           
-          {/* Updated grid: 2 columns on mobile, 3 on larger screens */}
+          {/* Updated grid: 2 columns on mobile, 3 on larger screens with improved image display */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mt-4">
             {products.map((product) => (
               <Card key={product.id} className="bg-brand-dark border-brand-gold/20 overflow-hidden group">
-                <div className="relative h-32 md:h-48 overflow-hidden">
+                <div className="relative aspect-square overflow-hidden">
                   <img 
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 rounded-t-lg"
                   />
                 </div>
                 <CardContent className="p-2 md:p-4">
                   <h4 className="text-white font-medium mb-2 text-xs md:text-sm line-clamp-2">{product.name}</h4>
-                  {product.price && (
-                    <p className="text-brand-gold text-xs md:text-sm mb-3 font-semibold">{formatPrice(product.price)}</p>
-                  )}
+                  <p className="text-brand-gold text-xs md:text-sm mb-3 font-semibold">{formatPrice(product.price)}</p>
                   <div className="space-y-1.5 md:space-y-2">
                     <Button 
                       onClick={() => handleProductSelect(product)}
