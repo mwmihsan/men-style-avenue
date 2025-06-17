@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import SearchFilters from './SearchFilters';
 import ProductModal from './ProductModal';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { Star, Heart } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -96,7 +97,7 @@ Could you please provide more details about availability, sizes, colors, and pri
   const showResults = searchTerm || selectedCategory !== 'all' || priceRange !== 'all';
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <SearchFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -111,14 +112,14 @@ Could you please provide more details about availability, sizes, colors, and pri
       {/* Search Results */}
       {showResults && (
         <div>
-          <h3 className="text-2xl font-playfair font-bold text-white mb-6">
+          <h3 className="text-xl md:text-2xl font-playfair font-bold text-white mb-4 md:mb-6">
             Search Results ({filteredProducts.length} items)
           </h3>
           
           {filteredProducts.length === 0 ? (
-            <Card className="bg-brand-gray border-brand-gold/20 p-8 text-center">
+            <Card className="bg-brand-gray border-brand-gold/20 p-6 md:p-8 text-center">
               <CardContent className="p-0">
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-300 text-base md:text-lg">
                   No products found matching your criteria.
                 </p>
                 <Button 
@@ -130,31 +131,42 @@ Could you please provide more details about availability, sizes, colors, and pri
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
               {filteredProducts.map((product) => (
                 <Card 
                   key={product.id} 
-                  className="bg-brand-gray border-brand-gold/20 overflow-hidden group cursor-pointer hover:border-brand-gold/40 transition-all"
+                  className="bg-brand-gray border-brand-gold/20 overflow-hidden group cursor-pointer hover:border-brand-gold/40 transition-all hover:shadow-lg hover:shadow-brand-gold/10"
                   onClick={() => handleProductClick(product)}
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
                     <img 
                       src={product.image}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="bg-brand-gold/20 backdrop-blur-sm p-1.5 rounded-full text-brand-gold hover:bg-brand-gold/30 transition-colors">
+                        <Heart className="w-3 h-3 md:w-4 md:h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <CardContent className="p-4">
-                    <h4 className="text-white font-medium mb-2 line-clamp-2">
+                  <CardContent className="p-3 md:p-4">
+                    <h4 className="text-white font-medium mb-1 md:mb-2 line-clamp-2 text-xs md:text-sm lg:text-base">
                       {product.name}
                     </h4>
-                    <p className="text-brand-gold text-sm mb-2">
+                    <p className="text-brand-gold text-xs mb-1 md:mb-2">
                       {product.category}
                     </p>
                     {product.price && (
-                      <p className="text-gray-300 text-sm">
-                        {product.price}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-gray-300 text-xs md:text-sm font-semibold">
+                          {product.price}
+                        </p>
+                        <div className="flex items-center text-brand-gold">
+                          <Star className="w-3 h-3 fill-current" />
+                          <span className="text-xs ml-1">4.5</span>
+                        </div>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
