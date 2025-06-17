@@ -229,14 +229,15 @@ const AdminPanel = () => {
               </div>
               
               <div>
-                <Label htmlFor="price" className="text-white">Price Range *</Label>
+                <Label htmlFor="price" className="text-white">Price *</Label>
                 <Input
                   id="price"
                   value={formData.price || ''}
                   onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  placeholder="Rs. 1,500 - 2,500"
+                  placeholder="Rs. 2,500"
                   className="bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
                 />
+                <p className="text-xs text-gray-400 mt-1">Enter single price (e.g., Rs. 2,500)</p>
               </div>
               
               <ImageUpload

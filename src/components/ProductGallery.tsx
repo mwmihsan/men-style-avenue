@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -10,6 +9,18 @@ const ProductGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { products, loading } = useProducts();
+
+  // Convert price range to single price display
+  const formatPrice = (price: string) => {
+    const priceNumbers = price.match(/\d+/g);
+    if (priceNumbers && priceNumbers.length > 0) {
+      const minPrice = parseInt(priceNumbers[0]);
+      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
+      const avgPrice = Math.round((minPrice + maxPrice) / 2);
+      return `Rs. ${avgPrice.toLocaleString()}`;
+    }
+    return price;
+  };
 
   // Group products by category
   const groupedProducts = products.reduce((acc, product) => {
@@ -28,7 +39,7 @@ const ProductGallery = () => {
     productCount: groupedProducts[categoryName].length
   }));
 
-  // Flatten all products for search
+  // Flatten all products for search with formatted price
   const allProducts = products.map(product => ({
     id: product.id,
     name: product.name,
@@ -66,16 +77,16 @@ const ProductGallery = () => {
               Loading our premium collection...
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
               <Card key={i} className="bg-brand-gray border-brand-gold/20 animate-pulse">
-                <div className="h-48 md:h-64 bg-gray-700 rounded-t-lg"></div>
-                <CardContent className="p-4 md:p-6">
-                  <div className="h-6 bg-gray-700 rounded mb-3"></div>
-                  <div className="h-4 bg-gray-700 rounded mb-6"></div>
+                <div className="h-32 md:h-48 lg:h-64 bg-gray-700 rounded-t-lg"></div>
+                <CardContent className="p-3 md:p-4 lg:p-6">
+                  <div className="h-4 md:h-6 bg-gray-700 rounded mb-2 md:mb-3"></div>
+                  <div className="h-3 md:h-4 bg-gray-700 rounded mb-4 md:mb-6"></div>
                   <div className="space-y-2">
-                    <div className="h-10 bg-gray-700 rounded"></div>
-                    <div className="h-10 bg-gray-700 rounded"></div>
+                    <div className="h-8 md:h-10 bg-gray-700 rounded"></div>
+                    <div className="h-8 md:h-10 bg-gray-700 rounded"></div>
                   </div>
                 </CardContent>
               </Card>
@@ -123,42 +134,42 @@ const ProductGallery = () => {
             </Card>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
             {categories.map((category, index) => (
               <Card 
                 key={index} 
                 className="bg-brand-gray border-brand-gold/20 overflow-hidden card-hover group"
               >
-                <div className="relative h-48 md:h-64 overflow-hidden">
+                <div className="relative h-32 md:h-48 lg:h-64 overflow-hidden">
                   <img 
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent" />
-                  <div className="absolute top-3 right-3 bg-brand-gold text-brand-dark px-2 py-1 rounded-full text-xs font-semibold">
+                  <div className="absolute top-2 md:top-3 right-2 md:right-3 bg-brand-gold text-brand-dark px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold">
                     {category.productCount} items
                   </div>
                 </div>
                 
-                <CardContent className="p-4 md:p-6">
-                  <h3 className="text-xl md:text-2xl font-playfair font-semibold text-white mb-2 md:mb-3">
+                <CardContent className="p-3 md:p-4 lg:p-6">
+                  <h3 className="text-lg md:text-xl lg:text-2xl font-playfair font-semibold text-white mb-1 md:mb-2 lg:mb-3">
                     {category.name}
                   </h3>
-                  <p className="text-gray-300 mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
+                  <p className="text-gray-300 mb-3 md:mb-4 lg:mb-6 leading-relaxed text-xs md:text-sm lg:text-base line-clamp-2">
                     {category.description}
                   </p>
-                  <div className="space-y-2 md:space-y-3">
+                  <div className="space-y-1.5 md:space-y-2 lg:space-y-3">
                     <Button 
                       onClick={() => handleViewProducts(category.name)}
-                      className="btn-gold w-full text-sm md:text-base"
+                      className="btn-gold w-full text-xs md:text-sm lg:text-base py-1.5 md:py-2 lg:py-3"
                     >
                       View Products
                     </Button>
                     <Button 
                       onClick={() => handleWhatsApp(category.name)}
                       variant="outline"
-                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-sm md:text-base"
+                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm lg:text-base py-1.5 md:py-2 lg:py-3"
                     >
                       Quick Inquiry
                     </Button>

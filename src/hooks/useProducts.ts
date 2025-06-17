@@ -46,7 +46,7 @@ export const useProducts = () => {
         name: product.name,
         category: product.category,
         image: product.image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80',
-        price: `Rs. ${product.price_min.toLocaleString()} - ${product.price_max.toLocaleString()}`,
+        price: `Rs. ${Math.round((product.price_min + product.price_max) / 2).toLocaleString()}`,
         description: product.description,
         isOutOfStock: product.is_out_of_stock,
         isNewArrival: product.is_new_arrival,
@@ -64,10 +64,11 @@ export const useProducts = () => {
 
   const addProduct = async (productData: ProductFormData) => {
     try {
-      // Parse price range
-      const priceMatch = productData.price.match(/Rs\.\s*(\d{1,3}(?:,\d{3})*)\s*-\s*(\d{1,3}(?:,\d{3})*)/);
-      const priceMin = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
-      const priceMax = priceMatch ? parseInt(priceMatch[2].replace(/,/g, '')) : 0;
+      // Parse single price to create range (±20% for flexibility)
+      const priceMatch = productData.price.match(/Rs\.\s*(\d{1,3}(?:,\d{3})*)/);
+      const basePrice = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
+      const priceMin = Math.round(basePrice * 0.8); // 20% below
+      const priceMax = Math.round(basePrice * 1.2); // 20% above
 
       const { error } = await supabase
         .from('products')
@@ -96,10 +97,11 @@ export const useProducts = () => {
 
   const updateProduct = async (productId: string, productData: ProductFormData) => {
     try {
-      // Parse price range
-      const priceMatch = productData.price.match(/Rs\.\s*(\d{1,3}(?:,\d{3})*)\s*-\s*(\d{1,3}(?:,\d{3})*)/);
-      const priceMin = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
-      const priceMax = priceMatch ? parseInt(priceMatch[2].replace(/,/g, '')) : 0;
+      // Parse single price to create range (±20% for flexibility)
+      const priceMatch = productData.price.match(/Rs\.\s*(\d{1,3}(?:,\d{3})*)/);
+      const basePrice = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 0;
+      const priceMin = Math.round(basePrice * 0.8); // 20% below
+      const priceMax = Math.round(basePrice * 1.2); // 20% above
 
       const { error } = await supabase
         .from('products')

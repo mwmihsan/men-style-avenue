@@ -68,6 +68,18 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
     });
   }, [allProducts, searchTerm, selectedCategory, priceRange]);
 
+  // Convert price range to single price display
+  const formatPrice = (price: string) => {
+    const priceNumbers = price.match(/\d+/g);
+    if (priceNumbers && priceNumbers.length > 0) {
+      const minPrice = parseInt(priceNumbers[0]);
+      const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
+      const avgPrice = Math.round((minPrice + maxPrice) / 2);
+      return `Rs. ${avgPrice.toLocaleString()}`;
+    }
+    return price;
+  };
+
   const handleClearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
@@ -81,7 +93,7 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
     const message = `Hello! I'm interested in this ${product.category} item:
 
 Product: ${product.name}
-${product.price ? `Price Range: ${product.price}` : ''}
+${product.price ? `Price: ${formatPrice(product.price)}` : ''}
 
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
@@ -131,39 +143,39 @@ Could you please provide more details about availability, sizes, colors, and pri
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
               {filteredProducts.map((product) => (
                 <Card 
                   key={product.id} 
                   className="bg-brand-gray border-brand-gold/20 overflow-hidden group cursor-pointer hover:border-brand-gold/40 transition-all hover:shadow-lg hover:shadow-brand-gold/10"
                   onClick={() => handleProductClick(product)}
                 >
-                  <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
+                  <div className="relative h-24 sm:h-32 md:h-40 lg:h-48 overflow-hidden">
                     <img 
                       src={product.image}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="bg-brand-gold/20 backdrop-blur-sm p-1.5 rounded-full text-brand-gold hover:bg-brand-gold/30 transition-colors">
-                        <Heart className="w-3 h-3 md:w-4 md:h-4" />
+                    <div className="absolute top-1 right-1 md:top-2 md:right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="bg-brand-gold/20 backdrop-blur-sm p-1 md:p-1.5 rounded-full text-brand-gold hover:bg-brand-gold/30 transition-colors">
+                        <Heart className="w-2 h-2 md:w-3 md:h-3 lg:w-4 lg:h-4" />
                       </button>
                     </div>
                   </div>
-                  <CardContent className="p-3 md:p-4">
-                    <h4 className="text-white font-medium mb-1 md:mb-2 line-clamp-2 text-xs md:text-sm lg:text-base">
+                  <CardContent className="p-2 md:p-3 lg:p-4">
+                    <h4 className="text-white font-medium mb-1 line-clamp-2 text-xs md:text-sm lg:text-base leading-tight">
                       {product.name}
                     </h4>
-                    <p className="text-brand-gold text-xs mb-1 md:mb-2">
+                    <p className="text-brand-gold text-xs mb-1">
                       {product.category}
                     </p>
                     {product.price && (
                       <div className="flex items-center justify-between">
                         <p className="text-gray-300 text-xs md:text-sm font-semibold">
-                          {product.price}
+                          {formatPrice(product.price)}
                         </p>
                         <div className="flex items-center text-brand-gold">
-                          <Star className="w-3 h-3 fill-current" />
+                          <Star className="w-2 h-2 md:w-3 md:h-3 fill-current" />
                           <span className="text-xs ml-1">4.5</span>
                         </div>
                       </div>
