@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Package } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
 
 interface OrderItem {
   productName: string;
@@ -19,16 +20,7 @@ interface OrderItemsSectionProps {
 }
 
 const OrderItemsSection = ({ items, onItemsUpdate }: OrderItemsSectionProps) => {
-  const products = [
-    'Classic White Dress Shirt',
-    'Navy Polo Shirt',
-    'Denim Trousers',
-    'Cotton T-Shirt',
-    'Formal Blazer',
-    'Casual Pants',
-    'Leather Belt',
-    'Sports Shoes'
-  ];
+  const { products, loading } = useProducts();
 
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36', '38', '40', '42'];
 
@@ -48,6 +40,38 @@ const OrderItemsSection = ({ items, onItemsUpdate }: OrderItemsSectionProps) => 
     );
     onItemsUpdate(updatedItems);
   };
+
+  const handleProductChange = (index: number, productName: string) => {
+    const selectedProduct = products.find(p => p.name === productName);
+    const updatedItems = items.map((item, i) => 
+      i === index ? { 
+        ...item, 
+        productName,
+        // Extract minimum price from the price range for default value
+        price: selectedProduct ? getMinPrice(selectedProduct.price) : 0
+      } : item
+    );
+    onItemsUpdate(updatedItems);
+  };
+
+  const getMinPrice = (priceRange: string): number => {
+    // Extract numbers from price range like "Rs. 2,500 - 4,500"
+    const numbers = priceRange.match(/\d{1,3}(?:,\d{3})*/g);
+    if (numbers && numbers.length > 0) {
+      return parseInt(numbers[0].replace(/,/g, ''));
+    }
+    return 0;
+  };
+
+  if (loading) {
+    return (
+      <Card className="bg-brand-dark border-brand-gold/20">
+        <CardContent className="p-6 text-center">
+          <p className="text-gray-300">Loading products...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-brand-dark border-brand-gold/20">
@@ -86,14 +110,19 @@ const OrderItemsSection = ({ items, onItemsUpdate }: OrderItemsSectionProps) => 
                   <Label className="text-white text-sm">Product</Label>
                   <Select 
                     value={item.productName} 
-                    onValueChange={(value) => updateItem(index, 'productName', value)}
+                    onValueChange={(value) => handleProductChange(index, value)}
                   >
                     <SelectTrigger className="bg-brand-gray border-brand-gold/20 text-white h-10 mt-1">
                       <SelectValue placeholder="Select product" />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-gray border-brand-gold/20">
                       {products.map((product) => (
-                        <SelectItem key={product} value={product} className="text-white">{product}</SelectItem>
+                        <SelectItem key={product.id} value={product.name} className="text-white">
+                          <div className="flex flex-col">
+                            <span>{product.name}</span>
+                            <span className="text-xs text-brand-gold">{product.price}</span>
+                          </div>
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
