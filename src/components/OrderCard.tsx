@@ -1,12 +1,10 @@
 
-import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, Package, Clock, CheckCircle, Truck, AlertCircle } from 'lucide-react';
-import OrderDetails from '@/components/OrderDetails';
+import { Eye, Package, Phone, MapPin, Calendar, CreditCard, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface OrderItem {
   productName: string;
@@ -35,114 +33,126 @@ interface OrderCardProps {
 }
 
 const OrderCard = ({ order, onStatusUpdate }: OrderCardProps) => {
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  const getStatusIcon = (status: Order['status']) => {
-    switch (status) {
-      case 'pending': return <Clock className="w-3 h-3" />;
-      case 'confirmed': return <CheckCircle className="w-3 h-3" />;
-      case 'processing': return <Package className="w-3 h-3" />;
-      case 'shipped': return <Truck className="w-3 h-3" />;
-      case 'delivered': return <CheckCircle className="w-3 h-3" />;
-      case 'cancelled': return <AlertCircle className="w-3 h-3" />;
-      default: return <Clock className="w-3 h-3" />;
-    }
-  };
+  const navigate = useNavigate();
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-500 hover:bg-yellow-600';
-      case 'confirmed': return 'bg-blue-500 hover:bg-blue-600';
-      case 'processing': return 'bg-orange-500 hover:bg-orange-600';
-      case 'shipped': return 'bg-purple-500 hover:bg-purple-600';
-      case 'delivered': return 'bg-green-500 hover:bg-green-600';
-      case 'cancelled': return 'bg-red-500 hover:bg-red-600';
-      default: return 'bg-gray-500 hover:bg-gray-600';
+      case 'pending': return 'bg-yellow-500';
+      case 'confirmed': return 'bg-blue-500';
+      case 'processing': return 'bg-orange-500';
+      case 'shipped': return 'bg-purple-500';
+      case 'delivered': return 'bg-green-500';
+      case 'cancelled': return 'bg-red-500';
+      default: return 'bg-gray-500';
     }
   };
 
+  const handleViewOrder = () => {
+    navigate(`/order/${order.id}`);
+  };
+
   return (
-    <Card className="bg-brand-gray border-brand-gold/20 shadow-lg">
+    <Card className="bg-brand-gray border-brand-gold/20 overflow-hidden">
       <CardContent className="p-4">
-        {/* Order Header */}
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1">
-            <h3 className="text-white font-semibold text-lg">{order.id}</h3>
-            <p className="text-gray-300 font-medium">{order.customerName}</p>
-            <p className="text-gray-400 text-sm">{order.customerPhone}</p>
-          </div>
-          <Badge className={`${getStatusColor(order.status)} text-white text-xs px-2 py-1`}>
-            <div className="flex items-center gap-1">
-              {getStatusIcon(order.status)}
-              <span className="capitalize">{order.status}</span>
+        <div className="space-y-4">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Package className="w-5 h-5 text-brand-gold" />
+              <h3 className="font-semibold text-white">Order #{order.id.slice(-8)}</h3>
             </div>
-          </Badge>
-        </div>
+            <Badge className={`${getStatusColor(order.status)} text-white w-fit`}>
+              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            </Badge>
+          </div>
 
-        {/* Order Details */}
-        <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-          <div>
-            <p className="text-gray-400">Items</p>
-            <p className="text-white font-medium">{order.items.length} item{order.items.length > 1 ? 's' : ''}</p>
+          {/* Customer Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2 text-gray-300">
+              <Phone className="w-4 h-4 text-brand-gold" />
+              <span>{order.customerName}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <Calendar className="w-4 h-4 text-brand-gold" />
+              <span>{new Date(order.orderDate).toLocaleDateString()}</span>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-400">Total</p>
-            <p className="text-brand-gold font-bold">Rs. {order.totalAmount.toLocaleString()}</p>
-          </div>
-          <div>
-            <p className="text-gray-400">Date</p>
-            <p className="text-white">{new Date(order.orderDate).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <p className="text-gray-400">Payment</p>
-            <p className="text-white text-xs">{order.paymentMethod}</p>
-          </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button 
+          {/* Items Summary */}
+          <div className="bg-brand-dark rounded-lg p-3">
+            <h4 className="text-white font-medium mb-2">Items ({order.items.length})</h4>
+            <div className="space-y-1">
+              {order.items.slice(0, 2).map((item, index) => (
+                <div key={index} className="flex justify-between text-sm text-gray-300">
+                  <span>{item.productName} ({item.size}) x{item.quantity}</span>
+                  <span>Rs. {(item.price * item.quantity).toLocaleString()}</span>
+                </div>
+              ))}
+              {order.items.length > 2 && (
+                <p className="text-xs text-gray-400">+{order.items.length - 2} more items</p>
+              )}
+            </div>
+          </div>
+
+          {/* Total and Actions */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-brand-gold font-bold text-lg">
+              Total: Rs. {order.totalAmount.toLocaleString()}
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSelectedOrder(order)}
-                className="flex-1 h-10 border-brand-gold/20 text-white hover:bg-brand-gold/10"
+                onClick={handleViewOrder}
+                className="border-brand-gold/20 text-white hover:bg-brand-gold/10"
               >
-                <Eye className="w-4 h-4 mr-2" />
-                View Details
+                <Eye className="w-4 h-4 mr-1" />
+                View Order
               </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[95vw] max-w-2xl h-[90vh] bg-brand-gray border-brand-gold/20 overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-white">Order Details - {order.id}</DialogTitle>
-              </DialogHeader>
-              {selectedOrder && (
-                <OrderDetails 
-                  order={selectedOrder} 
-                  onStatusUpdate={onStatusUpdate}
-                />
+              
+              <Select 
+                value={order.status} 
+                onValueChange={(value) => onStatusUpdate(order.id, value as Order['status'])}
+              >
+                <SelectTrigger className="w-32 bg-brand-dark border-brand-gold/20 text-white text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          {(order.deliveryAddress || order.paymentMethod || order.notes) && (
+            <div className="pt-3 border-t border-gray-600 space-y-2 text-sm">
+              {order.deliveryAddress && (
+                <div className="flex items-start gap-2 text-gray-300">
+                  <MapPin className="w-4 h-4 text-brand-gold mt-0.5" />
+                  <span className="flex-1">{order.deliveryAddress}</span>
+                </div>
               )}
-            </DialogContent>
-          </Dialog>
-          
-          <Select 
-            value={order.status} 
-            onValueChange={(value) => onStatusUpdate(order.id, value as Order['status'])}
-          >
-            <SelectTrigger className="w-20 h-10 text-xs border-brand-gold/20 bg-brand-dark text-white">
-              <span className="sr-only">Change status</span>
-              <Package className="w-4 h-4" />
-            </SelectTrigger>
-            <SelectContent className="bg-brand-gray border-brand-gold/20">
-              <SelectItem value="pending" className="text-white">Pending</SelectItem>
-              <SelectItem value="confirmed" className="text-white">Confirmed</SelectItem>
-              <SelectItem value="processing" className="text-white">Processing</SelectItem>
-              <SelectItem value="shipped" className="text-white">Shipped</SelectItem>
-              <SelectItem value="delivered" className="text-white">Delivered</SelectItem>
-              <SelectItem value="cancelled" className="text-white">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+              {order.paymentMethod && (
+                <div className="flex items-center gap-2 text-gray-300">
+                  <CreditCard className="w-4 h-4 text-brand-gold" />
+                  <span>{order.paymentMethod}</span>
+                </div>
+              )}
+              {order.notes && (
+                <div className="flex items-start gap-2 text-gray-300">
+                  <FileText className="w-4 h-4 text-brand-gold mt-0.5" />
+                  <span className="flex-1">{order.notes}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
