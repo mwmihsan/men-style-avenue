@@ -41,18 +41,23 @@ export const useProducts = () => {
 
       if (error) throw error;
 
-      const formattedProducts = data.map(product => ({
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        image: product.image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80',
-        price: `Rs. ${Math.round((product.price_min + product.price_max) / 2).toLocaleString()}`,
-        description: product.description,
-        isOutOfStock: product.is_out_of_stock,
-        isNewArrival: product.is_new_arrival,
-        hasOffer: product.has_offer,
-        offerText: product.offer_text
-      }));
+      const formattedProducts = data.map(product => {
+        // Calculate average price from price_min and price_max
+        const avgPrice = Math.round((product.price_min + product.price_max) / 2);
+        
+        return {
+          id: product.id,
+          name: product.name,
+          category: product.category,
+          image: product.image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80',
+          price: avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price',
+          description: product.description,
+          isOutOfStock: product.is_out_of_stock,
+          isNewArrival: product.is_new_arrival,
+          hasOffer: product.has_offer,
+          offerText: product.offer_text
+        };
+      });
 
       setProducts(formattedProducts);
     } catch (error) {

@@ -28,22 +28,9 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
 
-  // Enhanced price formatting function
+  // Simplified price formatting function - price is already formatted from the hook
   const formatPrice = (price?: string) => {
-    if (!price) return 'Contact for Price';
-    
-    // If already formatted as "Rs. X", return as is
-    if (price.includes('Rs.')) {
-      const priceNumbers = price.match(/\d+/g);
-      if (priceNumbers && priceNumbers.length > 0) {
-        const avgPrice = parseInt(priceNumbers[0]);
-        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
-      }
-    }
-    
-    // If it's just a number, format it
-    const numPrice = parseInt(price.toString());
-    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
+    return price || 'Contact for Price';
   };
 
   // Filter products based on search and filters
@@ -59,24 +46,23 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
       // Price range filter
       let matchesPrice = true;
       if (priceRange !== 'all' && product.price) {
-        const priceNumbers = product.price.match(/\d+/g);
-        if (priceNumbers && priceNumbers.length > 0) {
-          const minPrice = parseInt(priceNumbers[0]);
-          const maxPrice = priceNumbers.length > 1 ? parseInt(priceNumbers[1]) : minPrice;
-          const avgPrice = (minPrice + maxPrice) / 2;
-
+        // Extract numeric value from formatted price (e.g., "Rs. 1,500" -> 1500)
+        const priceMatch = product.price.match(/Rs\.\s*(\d{1,3}(?:,\d{3})*)/);
+        if (priceMatch) {
+          const price = parseInt(priceMatch[1].replace(/,/g, ''));
+          
           switch (priceRange) {
             case 'under-2000':
-              matchesPrice = avgPrice < 2000;
+              matchesPrice = price < 2000;
               break;
             case '2000-4000':
-              matchesPrice = avgPrice >= 2000 && avgPrice <= 4000;
+              matchesPrice = price >= 2000 && price <= 4000;
               break;
             case '4000-6000':
-              matchesPrice = avgPrice >= 4000 && avgPrice <= 6000;
+              matchesPrice = price >= 4000 && price <= 6000;
               break;
             case 'above-6000':
-              matchesPrice = avgPrice > 6000;
+              matchesPrice = price > 6000;
               break;
           }
         }

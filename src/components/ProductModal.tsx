@@ -28,22 +28,9 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
   const [showReviews, setShowReviews] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
 
-  // Enhanced price formatting function
+  // Simplified price formatting function - price is already formatted from the hook
   const formatPrice = (price?: string) => {
-    if (!price) return 'Contact for Price';
-    
-    // If already formatted as "Rs. X", return as is
-    if (price.includes('Rs.')) {
-      const priceNumbers = price.match(/\d+/g);
-      if (priceNumbers && priceNumbers.length > 0) {
-        const avgPrice = parseInt(priceNumbers[0]);
-        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
-      }
-    }
-    
-    // If it's just a number, format it
-    const numPrice = parseInt(price.toString());
-    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
+    return price || 'Contact for Price';
   };
 
   const handleProductSelect = (product: Product) => {

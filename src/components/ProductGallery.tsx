@@ -10,24 +10,6 @@ const ProductGallery = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { products, loading } = useProducts();
 
-  // Enhanced price formatting function
-  const formatPrice = (price?: string) => {
-    if (!price) return 'Contact for Price';
-    
-    // If already formatted as "Rs. X", return as is
-    if (price.includes('Rs.')) {
-      const priceNumbers = price.match(/\d+/g);
-      if (priceNumbers && priceNumbers.length > 0) {
-        const avgPrice = parseInt(priceNumbers[0]);
-        return avgPrice > 0 ? `Rs. ${avgPrice.toLocaleString()}` : 'Contact for Price';
-      }
-    }
-    
-    // If it's just a number, format it
-    const numPrice = parseInt(price.toString());
-    return numPrice > 0 ? `Rs. ${numPrice.toLocaleString()}` : 'Contact for Price';
-  };
-
   // Group products by category
   const groupedProducts = products.reduce((acc, product) => {
     if (!acc[product.category]) {
@@ -45,12 +27,12 @@ const ProductGallery = () => {
     productCount: groupedProducts[categoryName].length
   }));
 
-  // Flatten all products for search with formatted price
+  // Flatten all products for search with properly formatted price
   const allProducts = products.map(product => ({
     id: product.id,
     name: product.name,
     image: product.image,
-    price: product.price,
+    price: product.price, // Already formatted from useProducts hook
     category: product.category
   }));
 
