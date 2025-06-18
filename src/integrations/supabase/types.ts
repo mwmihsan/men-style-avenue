@@ -106,6 +106,7 @@ export type Database = {
           offer_text: string | null
           price_max: number
           price_min: number
+          sizes: string[] | null
           updated_at: string
         }
         Insert: {
@@ -121,6 +122,7 @@ export type Database = {
           offer_text?: string | null
           price_max: number
           price_min: number
+          sizes?: string[] | null
           updated_at?: string
         }
         Update: {
@@ -136,6 +138,7 @@ export type Database = {
           offer_text?: string | null
           price_max?: number
           price_min?: number
+          sizes?: string[] | null
           updated_at?: string
         }
         Relationships: []
