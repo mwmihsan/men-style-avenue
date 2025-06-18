@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import { Edit, Trash2, Plus, Loader2 } from 'lucide-react';
 import { useProducts, Product, ProductFormData } from '@/hooks/useProducts';
 import { useToast } from '@/hooks/use-toast';
 import ImageUpload from './ImageUpload';
+import SizeSelector from './SizeSelector';
 
 const AdminPanel = () => {
   const { products, loading, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -44,7 +44,8 @@ const AdminPanel = () => {
       isOutOfStock: product.isOutOfStock,
       isNewArrival: product.isNewArrival,
       hasOffer: product.hasOffer,
-      offerText: product.offerText
+      offerText: product.offerText,
+      sizes: product.sizes || []
     });
     setIsEditModalOpen(true);
   };
@@ -60,7 +61,8 @@ const AdminPanel = () => {
       isOutOfStock: false,
       isNewArrival: false,
       hasOffer: false,
-      offerText: ''
+      offerText: '',
+      sizes: []
     });
     setIsEditModalOpen(true);
   };
@@ -85,7 +87,8 @@ const AdminPanel = () => {
       isOutOfStock: formData.isOutOfStock || false,
       isNewArrival: formData.isNewArrival || false,
       hasOffer: formData.hasOffer || false,
-      offerText: formData.offerText
+      offerText: formData.offerText,
+      sizes: formData.sizes || []
     };
 
     const success = editingProduct 
@@ -183,7 +186,19 @@ const AdminPanel = () => {
             <CardContent className="p-4">
               <h3 className="text-white font-semibold mb-2">{product.name}</h3>
               <p className="text-gray-300 text-sm mb-2">{product.category}</p>
-              <p className="text-brand-gold mb-3">{product.price}</p>
+              <p className="text-brand-gold mb-2">{product.price}</p>
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-gray-400 text-xs mb-1">Available sizes:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {product.sizes.map((size) => (
+                      <Badge key={size} variant="outline" className="text-xs border-brand-gold/40 text-brand-gold">
+                        {size}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="flex flex-wrap gap-2">
                 {getStatusBadges(product)}
               </div>
@@ -194,14 +209,14 @@ const AdminPanel = () => {
 
       {/* Edit/Add Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-2xl bg-brand-gray border-brand-gold/20 text-white">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-gray border-brand-gold/20 text-white">
           <DialogHeader>
             <DialogTitle className="text-white font-playfair">
               {editingProduct ? 'Edit Product' : 'Add New Product'}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name" className="text-white">Product Name *</Label>
@@ -240,13 +255,6 @@ const AdminPanel = () => {
                 <p className="text-xs text-gray-400 mt-1">Enter single price (e.g., Rs. 2,500)</p>
               </div>
               
-              <ImageUpload
-                currentImage={formData.image}
-                onImageUploaded={(url) => setFormData({...formData, image: url})}
-              />
-            </div>
-            
-            <div className="space-y-4">
               <div>
                 <Label htmlFor="description" className="text-white">Description</Label>
                 <Textarea
@@ -258,6 +266,21 @@ const AdminPanel = () => {
                   rows={3}
                 />
               </div>
+            </div>
+            
+            <div className="space-y-4">
+              <ImageUpload
+                currentImage={formData.image}
+                onImageUploaded={(url) => setFormData({...formData, image: url})}
+              />
+              
+              {formData.category && (
+                <SizeSelector
+                  sizes={formData.sizes || []}
+                  onChange={(sizes) => setFormData({...formData, sizes})}
+                  category={formData.category}
+                />
+              )}
               
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">

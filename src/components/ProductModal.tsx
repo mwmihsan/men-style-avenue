@@ -2,6 +2,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { X, Ruler } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import SizeGuide from './SizeGuide';
@@ -13,6 +14,7 @@ interface Product {
   name: string;
   image: string;
   price?: string;
+  sizes?: string[];
 }
 
 interface ProductModalProps {
@@ -44,12 +46,16 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
     });
 
     const formattedPrice = formatPrice(product.price);
+    const sizesText = product.sizes && product.sizes.length > 0 
+      ? `\nAvailable Sizes: ${product.sizes.join(', ')}` 
+      : '';
+    
     const message = `Hello! I'm interested in this ${category} item:
 
 Product: ${product.name}
-${product.price ? `Price: ${formattedPrice}` : ''}
+${product.price ? `Price: ${formattedPrice}` : ''}${sizesText}
 
-Could you please provide more details about availability, sizes, colors, and pricing?`;
+Could you please provide more details about availability and pricing?`;
     
     window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -153,7 +159,27 @@ Could you please provide more details about availability, sizes, colors, and pri
                 </div>
                 <CardContent className="p-2 md:p-4">
                   <h4 className="text-white font-medium mb-2 text-xs md:text-sm line-clamp-2">{product.name}</h4>
-                  <p className="text-brand-gold text-xs md:text-sm mb-3 font-semibold">{formatPrice(product.price)}</p>
+                  <p className="text-brand-gold text-xs md:text-sm mb-2 font-semibold">{formatPrice(product.price)}</p>
+                  
+                  {/* Display available sizes */}
+                  {product.sizes && product.sizes.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-gray-400 text-xs mb-1">Available sizes:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {product.sizes.slice(0, 4).map((size) => (
+                          <Badge key={size} variant="outline" className="text-xs border-brand-gold/40 text-brand-gold">
+                            {size}
+                          </Badge>
+                        ))}
+                        {product.sizes.length > 4 && (
+                          <Badge variant="outline" className="text-xs border-brand-gold/40 text-brand-gold">
+                            +{product.sizes.length - 4}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="space-y-1.5 md:space-y-2">
                     <Button 
                       onClick={() => handleProductSelect(product)}

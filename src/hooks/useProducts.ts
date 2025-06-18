@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -13,6 +12,7 @@ export interface Product {
   isNewArrival: boolean;
   hasOffer: boolean;
   offerText?: string;
+  sizes: string[];
 }
 
 export interface ProductFormData {
@@ -25,6 +25,7 @@ export interface ProductFormData {
   isNewArrival: boolean;
   hasOffer: boolean;
   offerText?: string;
+  sizes: string[];
 }
 
 export const useProducts = () => {
@@ -55,7 +56,8 @@ export const useProducts = () => {
           isOutOfStock: product.is_out_of_stock,
           isNewArrival: product.is_new_arrival,
           hasOffer: product.has_offer,
-          offerText: product.offer_text
+          offerText: product.offer_text,
+          sizes: product.sizes || []
         };
       });
 
@@ -87,7 +89,8 @@ export const useProducts = () => {
           is_out_of_stock: productData.isOutOfStock,
           is_new_arrival: productData.isNewArrival,
           has_offer: productData.hasOffer,
-          offer_text: productData.offerText
+          offer_text: productData.offerText,
+          sizes: productData.sizes
         });
 
       if (error) throw error;
@@ -120,7 +123,8 @@ export const useProducts = () => {
           is_out_of_stock: productData.isOutOfStock,
           is_new_arrival: productData.isNewArrival,
           has_offer: productData.hasOffer,
-          offer_text: productData.offerText
+          offer_text: productData.offerText,
+          sizes: productData.sizes
         })
         .eq('id', productId);
 
