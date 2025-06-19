@@ -14,6 +14,11 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.order_number.toLowerCase().includes(searchTerm.toLowerCase());
@@ -98,7 +103,7 @@ const Orders = () => {
 
         {/* Orders List */}
         {formattedOrders.length === 0 ? (
-          <EmptyOrdersState />
+          <EmptyOrdersState onClearFilters={handleClearFilters} />
         ) : (
           <div className="grid gap-6">
             {formattedOrders.map((order) => (
