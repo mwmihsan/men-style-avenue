@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, Package, TrendingUp, DollarSign, Eye, Settings, BarChart3, ShoppingCart } from 'lucide-react';
+import { Users, Package, TrendingUp, DollarSign, Eye, Settings, BarChart3, ShoppingCart, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import AdminPanel from '@/components/AdminPanel';
 import OrdersManager from '@/components/OrdersManager';
+import InstagramManager from '@/components/InstagramManager';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Admin = () => {
@@ -86,6 +87,18 @@ const Admin = () => {
           >
             <Settings className="w-4 h-4 mr-2" />
             Products
+          </Button>
+          <Button
+            variant={activeTab === 'instagram' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('instagram')}
+            className={`min-w-fit px-4 py-2 text-sm ${
+              activeTab === 'instagram' 
+                ? 'btn-gold' 
+                : 'border-brand-gold/20 text-white hover:bg-brand-gold/10'
+            }`}
+          >
+            <Camera className="w-4 h-4 mr-2" />
+            Instagram
           </Button>
         </div>
 
@@ -169,6 +182,12 @@ const Admin = () => {
         {activeTab === 'products' && (
           <div className="space-y-6">
             <AdminPanel />
+          </div>
+        )}
+
+        {activeTab === 'instagram' && (
+          <div className="space-y-6">
+            <InstagramManager />
           </div>
         )}
       </div>

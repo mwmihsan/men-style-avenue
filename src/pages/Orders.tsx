@@ -1,61 +1,22 @@
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Filter, Loader2 } from 'lucide-react';
-import OrderCard from '@/components/OrderCard';
-import OrderFilters from '@/components/OrderFilters';
-import EmptyOrdersState from '@/components/EmptyOrdersState';
-import OrderForm from '@/components/OrderForm';
+import { Search, Filter } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Header from '@/components/Header';
-import { useOrders, Order, OrderFormData } from '@/hooks/useOrders';
-import { useToast } from '@/hooks/use-toast';
+import OrderCard from '@/components/OrderCard';
+import EmptyOrdersState from '@/components/EmptyOrdersState';
+import { useOrders } from '@/hooks/useOrders';
 
 const Orders = () => {
-  const { orders, loading, addOrder, updateOrderStatus } = useOrders();
-  const { toast } = useToast();
+  const { orders, loading } = useOrders();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-
-  const handleUpdateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
-    const success = await updateOrderStatus(orderId, newStatus);
-    if (success) {
-      toast({
-        title: "Success",
-        description: "Order status updated successfully"
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to update order status",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleAddOrder = async (orderData: OrderFormData) => {
-    const success = await addOrder(orderData);
-    if (success) {
-      toast({
-        title: "Success",
-        description: "Order created successfully"
-      });
-      setIsOrderFormOpen(false);
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to create order",
-        variant: "destructive"
-      });
-    }
-  };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customer_phone.includes(searchTerm);
+                         order.order_number.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -71,22 +32,16 @@ const Orders = () => {
     status: order.status,
     orderDate: order.created_at.split('T')[0],
     deliveryAddress: order.customer_address,
-    paymentMethod: order.payment_method,
+    paymentMethod: order.payment_method || '',
     notes: order.notes
   }));
-
-  const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('all');
-    setShowFilters(false);
-  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-brand-dark">
         <Header />
         <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
         </div>
       </div>
     );
@@ -96,64 +51,64 @@ const Orders = () => {
     <div className="min-h-screen bg-brand-dark">
       <Header />
       
-      <div className="px-4 py-6">
-        {/* Mobile Header */}
+      <div className="px-4 py-6 max-w-6xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-montserrat font-bold text-white mb-2">Orders</h1>
-          <p className="text-gray-400 text-sm">Manage your customer orders</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-white mb-2">
+            Track Your Orders
+          </h1>
+          <p className="text-gray-400 text-sm">
+            View and track all your orders in one place
+          </p>
         </div>
 
-        {/* Mobile Action Bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
-            <DialogTrigger asChild>
-              <Button className="btn-gold w-full sm:w-auto order-2 sm:order-1">
-                <Plus className="w-4 h-4 mr-2" />
-                New Order
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[95vw] max-w-4xl h-[90vh] bg-brand-gray border-brand-gold/20 overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-white font-montserrat">Create New Order</DialogTitle>
-              </DialogHeader>
-              <OrderForm onSubmit={handleAddOrder} />
-            </DialogContent>
-          </Dialog>
+        {/* Search and Filter */}
+        <Card className="bg-brand-gray border-brand-gold/20 mb-6">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search by order number or customer name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-brand-dark border-brand-gold/20 text-white placeholder:text-gray-400"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Filter className="text-gray-400 w-4 h-4" />
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-40 bg-brand-dark border-brand-gold/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-brand-gray border-brand-gold/20">
+                    <SelectItem value="all" className="text-white">All Orders</SelectItem>
+                    <SelectItem value="pending" className="text-white">Pending</SelectItem>
+                    <SelectItem value="confirmed" className="text-white">Confirmed</SelectItem>
+                    <SelectItem value="processing" className="text-white">Processing</SelectItem>
+                    <SelectItem value="shipped" className="text-white">Shipped</SelectItem>
+                    <SelectItem value="delivered" className="text-white">Delivered</SelectItem>
+                    <SelectItem value="cancelled" className="text-white">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Button
-            variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-            className="w-full sm:w-auto border-brand-gold/20 text-white hover:bg-brand-gold/10 order-1 sm:order-2"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            Filters
-          </Button>
-        </div>
-
-        {/* Mobile Filters */}
-        {showFilters && (
-          <OrderFilters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-          />
-        )}
-
-        {/* Mobile Order Cards */}
-        <div className="space-y-4">
-          {formattedOrders.map((order) => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              onStatusUpdate={handleUpdateOrderStatus}
-            />
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {formattedOrders.length === 0 && (
-          <EmptyOrdersState onClearFilters={clearFilters} />
+        {/* Orders List */}
+        {formattedOrders.length === 0 ? (
+          <EmptyOrdersState />
+        ) : (
+          <div className="grid gap-6">
+            {formattedOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onStatusUpdate={() => {}} // Customer view - no status update
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
