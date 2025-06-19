@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User } from 'lucide-react';
@@ -68,6 +69,10 @@ const Header = () => {
     } else {
       setShowAdminLogin(true);
     }
+  };
+
+  const handleAdminLoginSuccess = () => {
+    navigate('/admin');
   };
 
   return (
@@ -158,6 +163,7 @@ const Header = () => {
       <AdminLogin 
         isOpen={showAdminLogin}
         onClose={() => setShowAdminLogin(false)}
+        onSuccess={handleAdminLoginSuccess}
       />
     </>
   );
