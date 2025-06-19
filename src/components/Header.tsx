@@ -28,6 +28,12 @@ const Header = () => {
     navigate('/');
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    element?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
       <header className="bg-brand-navy/95 backdrop-blur-sm border-b border-brand-gold/20 sticky top-0 z-50">
@@ -40,9 +46,31 @@ const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8 items-center">
               <Link to="/" className="text-white hover:text-brand-gold transition-colors">Home</Link>
-              <a href="#about" className="text-white hover:text-brand-gold transition-colors">About</a>
-              <a href="#products" className="text-white hover:text-brand-gold transition-colors">Products</a>
-              <a href="#contact" className="text-white hover:text-brand-gold transition-colors">Contact</a>
+              <button 
+                onClick={() => scrollToSection('products')} 
+                className="text-white hover:text-brand-gold transition-colors"
+              >
+                Products
+              </button>
+              <Link to="/orders" className="text-white hover:text-brand-gold transition-colors">View Orders</Link>
+              <button 
+                onClick={() => scrollToSection('instagram')} 
+                className="text-white hover:text-brand-gold transition-colors"
+              >
+                Instagram
+              </button>
+              <button 
+                onClick={() => scrollToSection('about')} 
+                className="text-white hover:text-brand-gold transition-colors"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')} 
+                className="text-white hover:text-brand-gold transition-colors"
+              >
+                Contact
+              </button>
               
               {isAdminAuthenticated ? (
                 <>
@@ -78,14 +106,36 @@ const Header = () => {
           {isMenuOpen && (
             <nav className="md:hidden py-4 border-t border-brand-gold/20">
               <div className="flex flex-col space-y-4">
-                <Link to="/" className="text-white hover:text-brand-gold transition-colors">Home</Link>
-                <a href="#about" className="text-white hover:text-brand-gold transition-colors">About</a>
-                <a href="#products" className="text-white hover:text-brand-gold transition-colors">Products</a>
-                <a href="#contact" className="text-white hover:text-brand-gold transition-colors">Contact</a>
+                <Link to="/" className="text-white hover:text-brand-gold transition-colors" onClick={() => setIsMenuOpen(false)}>Home</Link>
+                <button 
+                  onClick={() => scrollToSection('products')} 
+                  className="text-white hover:text-brand-gold transition-colors text-left"
+                >
+                  Products
+                </button>
+                <Link to="/orders" className="text-white hover:text-brand-gold transition-colors" onClick={() => setIsMenuOpen(false)}>View Orders</Link>
+                <button 
+                  onClick={() => scrollToSection('instagram')} 
+                  className="text-white hover:text-brand-gold transition-colors text-left"
+                >
+                  Instagram
+                </button>
+                <button 
+                  onClick={() => scrollToSection('about')} 
+                  className="text-white hover:text-brand-gold transition-colors text-left"
+                >
+                  About
+                </button>
+                <button 
+                  onClick={() => scrollToSection('contact')} 
+                  className="text-white hover:text-brand-gold transition-colors text-left"
+                >
+                  Contact
+                </button>
                 
                 {isAdminAuthenticated ? (
                   <>
-                    <Link to="/admin" className="text-white hover:text-brand-gold transition-colors">Admin</Link>
+                    <Link to="/admin" className="text-white hover:text-brand-gold transition-colors" onClick={() => setIsMenuOpen(false)}>Admin</Link>
                     <button
                       onClick={handleLogout}
                       className="text-white hover:text-brand-gold transition-colors flex items-center"
