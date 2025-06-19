@@ -3,11 +3,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Ruler } from 'lucide-react';
+import { X, Ruler, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import SizeGuide from './SizeGuide';
 import ProductReviews from './ProductReviews';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { useCart } from '@/contexts/CartContext';
 
 interface Product {
   id: string;
@@ -28,7 +29,9 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showReviews, setShowReviews] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const { addToRecentlyViewed } = useRecentlyViewed();
+  const { addToCart } = useCart();
 
   // Simplified price formatting function - price is already formatted from the hook
   const formatPrice = (price?: string) => {
@@ -58,6 +61,41 @@ ${product.price ? `Price: ${formattedPrice}` : ''}${sizesText}
 Could you please provide more details about availability and pricing?`;
     
     window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleAddToCart = (product: Product) => {
+    if (!product.price) {
+      // If no price, redirect to WhatsApp for inquiry
+      handleProductSelect(product);
+      return;
+    }
+
+    // Add to recently viewed
+    addToRecentlyViewed({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      category: category
+    });
+
+    const selectedSize = selectedSizes[product.id];
+    
+    addToCart({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      category: category,
+      selectedSize: selectedSize
+    });
+  };
+
+  const handleSizeSelect = (productId: string, size: string) => {
+    setSelectedSizes(prev => ({
+      ...prev,
+      [productId]: prev[productId] === size ? '' : size
+    }));
   };
 
   const handleViewReviews = (product: Product) => {
@@ -161,31 +199,43 @@ Could you please provide more details about availability and pricing?`;
                   <h4 className="text-white font-medium mb-2 text-xs md:text-sm line-clamp-2">{product.name}</h4>
                   <p className="text-brand-gold text-xs md:text-sm mb-2 font-semibold">{formatPrice(product.price)}</p>
                   
-                  {/* Display available sizes */}
+                  {/* Size Selection */}
                   {product.sizes && product.sizes.length > 0 && (
                     <div className="mb-3">
-                      <p className="text-gray-400 text-xs mb-1">Available sizes:</p>
+                      <p className="text-gray-400 text-xs mb-1">Select size:</p>
                       <div className="flex flex-wrap gap-1">
-                        {product.sizes.slice(0, 4).map((size) => (
-                          <Badge key={size} variant="outline" className="text-xs border-brand-gold/40 text-brand-gold">
+                        {product.sizes.map((size) => (
+                          <Badge 
+                            key={size} 
+                            variant="outline" 
+                            className={`text-xs cursor-pointer transition-colors ${
+                              selectedSizes[product.id] === size
+                                ? 'bg-brand-gold text-brand-dark border-brand-gold'
+                                : 'border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10'
+                            }`}
+                            onClick={() => handleSizeSelect(product.id, size)}
+                          >
                             {size}
                           </Badge>
                         ))}
-                        {product.sizes.length > 4 && (
-                          <Badge variant="outline" className="text-xs border-brand-gold/40 text-brand-gold">
-                            +{product.sizes.length - 4}
-                          </Badge>
-                        )}
                       </div>
                     </div>
                   )}
                   
                   <div className="space-y-1.5 md:space-y-2">
                     <Button 
-                      onClick={() => handleProductSelect(product)}
+                      onClick={() => handleAddToCart(product)}
                       className="w-full bg-brand-gold text-brand-dark hover:bg-brand-gold/90 transition-colors text-xs md:text-sm py-1.5 md:py-2"
                     >
-                      Inquire via WhatsApp
+                      <ShoppingCart className="w-3 h-3 mr-1" />
+                      {product.price ? 'Add to Cart' : 'Inquire'}
+                    </Button>
+                    <Button 
+                      onClick={() => handleProductSelect(product)}
+                      variant="outline"
+                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm py-1.5 md:py-2"
+                    >
+                      WhatsApp Inquiry
                     </Button>
                     <Button 
                       onClick={() => handleViewReviews(product)}

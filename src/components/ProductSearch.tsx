@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import SearchFilters from './SearchFilters';
 import ProductModal from './ProductModal';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
-import { Star, Heart } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { Star, Heart, ShoppingCart } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -27,6 +28,7 @@ const ProductSearch = ({ allProducts, categories }: ProductSearchProps) => {
   const [selectedModalCategory, setSelectedModalCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addToRecentlyViewed } = useRecentlyViewed();
+  const { addToCart } = useCart();
 
   // Simplified price formatting function - price is already formatted from the hook
   const formatPrice = (price?: string) => {
@@ -91,6 +93,24 @@ ${product.price ? `Price: ${formattedPrice}` : ''}
 Could you please provide more details about availability, sizes, colors, and pricing?`;
     
     window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the product click
+    
+    if (!product.price) {
+      // If no price, redirect to WhatsApp for inquiry
+      handleProductClick(product);
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      category: product.category
+    });
   };
 
   // Group filtered products by category for modal
@@ -162,7 +182,7 @@ Could you please provide more details about availability, sizes, colors, and pri
                     <p className="text-brand-gold text-xs mb-1">
                       {product.category}
                     </p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <p className="text-gray-300 text-xs md:text-sm font-semibold">
                         {formatPrice(product.price)}
                       </p>
@@ -171,6 +191,14 @@ Could you please provide more details about availability, sizes, colors, and pri
                         <span className="text-xs ml-1">4.5</span>
                       </div>
                     </div>
+                    <Button
+                      onClick={(e) => handleAddToCart(product, e)}
+                      className="w-full btn-gold text-xs py-1.5"
+                      size="sm"
+                    >
+                      <ShoppingCart className="w-3 h-3 mr-1" />
+                      {product.price ? 'Add to Cart' : 'Inquire'}
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
