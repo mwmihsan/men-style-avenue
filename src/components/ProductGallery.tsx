@@ -1,84 +1,65 @@
+
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart, Search } from 'lucide-react';
 import ProductModal from './ProductModal';
 import ProductSearch from './ProductSearch';
 import { useProducts } from '@/hooks/useProducts';
+import { useCart } from '@/contexts/CartContext';
+import { toast } from 'sonner';
 
 const ProductGallery = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { products, loading } = useProducts();
+  const { addToCart } = useCart();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Group products by category
-  const groupedProducts = products.reduce((acc, product) => {
-    if (!acc[product.category]) {
-      acc[product.category] = [];
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(products.map(product => product.category))];
+    return ['All', ...uniqueCategories];
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory]);
+
+  const handleAddToCart = (product, e) => {
+    e.stopPropagation();
+    
+    if (product.sizes && product.sizes.length > 0) {
+      // If product has sizes, open modal for size selection
+      setSelectedProduct(product);
+    } else {
+      // Add to cart without size
+      addToCart({
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        category: product.category
+      });
     }
-    acc[product.category].push(product);
-    return acc;
-  }, {} as Record<string, typeof products>);
-
-  // Create categories based on actual data
-  const categories = Object.keys(groupedProducts).map(categoryName => ({
-    name: categoryName,
-    description: `Premium quality ${categoryName.toLowerCase()} for professional and casual wear`,
-    image: groupedProducts[categoryName][0]?.image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80',
-    productCount: groupedProducts[categoryName].length
-  }));
-
-  // Flatten all products for search with properly formatted price
-  const allProducts = products.map(product => ({
-    id: product.id,
-    name: product.name,
-    image: product.image,
-    price: product.price, // Already formatted from useProducts hook
-    category: product.category
-  }));
-
-  const categoryNames = categories.map(cat => cat.name);
-
-  const handleViewProducts = (categoryName: string) => {
-    setSelectedCategory(categoryName);
-    setIsModalOpen(true);
-  };
-
-  const handleWhatsApp = (category: string) => {
-    const message = `Hello! I'm interested in your ${category} collection. Could you please share more details?`;
-    window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
-  };
-
-  const handleAddNewProduct = () => {
-    const message = `Hello! I'd like to inquire about adding new products to your collection or checking if you have any new arrivals.`;
-    window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   if (loading) {
     return (
-      <section id="products" className="py-12 md:py-20 bg-brand-dark">
+      <section id="products" className="py-20 bg-brand-navy">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold text-gradient mb-4 md:mb-6">
-              Our Collection
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-gradient mb-6">
+              Our Premium Collection
             </h2>
-            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Loading our premium collection...
-            </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i} className="bg-brand-gray border-brand-gold/20 animate-pulse">
-                <div className="aspect-square bg-gray-700 rounded-t-lg"></div>
-                <CardContent className="p-3 md:p-4 lg:p-6">
-                  <div className="h-4 md:h-6 bg-gray-700 rounded mb-2 md:mb-3"></div>
-                  <div className="h-3 md:h-4 bg-gray-700 rounded mb-4 md:mb-6"></div>
-                  <div className="space-y-2">
-                    <div className="h-8 md:h-10 bg-gray-700 rounded"></div>
-                    <div className="h-8 md:h-10 bg-gray-700 rounded"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-gold"></div>
           </div>
         </div>
       </section>
@@ -86,141 +67,140 @@ const ProductGallery = () => {
   }
 
   return (
-    <section id="products" className="py-12 md:py-20 bg-brand-dark">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8 md:mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold text-gradient mb-4 md:mb-6">
-            Our Collection
-          </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-            Discover our carefully curated selection of premium men's fashion
-          </p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="mb-8 md:mb-12">
-          <ProductSearch allProducts={allProducts} categories={categoryNames} />
-        </div>
-        
-        {categories.length === 0 ? (
-          <div className="text-center py-12">
-            <Card className="bg-brand-gray border-brand-gold/20 p-8 mx-auto max-w-md">
-              <CardContent className="p-0">
-                <h3 className="text-xl font-playfair font-bold text-white mb-4">
-                  No Products Yet
-                </h3>
-                <p className="text-gray-300 mb-6">
-                  Products will appear here once they are added to the collection.
-                </p>
-                <Button 
-                  onClick={handleAddNewProduct}
-                  className="btn-gold"
-                >
-                  Request Products
-                </Button>
-              </CardContent>
-            </Card>
+    <>
+      <section id="products" className="py-20 bg-brand-navy">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold text-gradient mb-6">
+              Our Premium Collection
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-poppins">
+              Discover our curated selection of premium menswear, crafted for the modern gentleman
+            </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
-            {categories.map((category, index) => (
+
+          {/* Search and Category Filters */}
+          <div className="mb-8 space-y-4">
+            <ProductSearch 
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+            />
+            
+            {/* Category Filter */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                  className={
+                    selectedCategory === category
+                      ? "bg-brand-gold text-brand-dark hover:bg-brand-gold/90"
+                      : "border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                  }
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product) => (
               <Card 
-                key={index} 
-                className="bg-brand-gray border-brand-gold/20 overflow-hidden card-hover group"
+                key={product.id} 
+                className="bg-brand-gray border-brand-gold/20 card-hover cursor-pointer group overflow-hidden"
+                onClick={() => setSelectedProduct(product)}
               >
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img 
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110 rounded-t-lg"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent" />
-                  <div className="absolute top-2 md:top-3 right-2 md:right-3 bg-brand-gold text-brand-dark px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold">
-                    {category.productCount} items
+                <div className="relative">
+                  <div className="aspect-square overflow-hidden">
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
                   </div>
+                  
+                  {product.isNewArrival && (
+                    <Badge className="absolute top-2 left-2 bg-green-500 text-white">
+                      New
+                    </Badge>
+                  )}
+                  
+                  {product.hasOffer && product.offerText && (
+                    <Badge className="absolute top-2 right-2 bg-red-500 text-white">
+                      {product.offerText}
+                    </Badge>
+                  )}
+                  
+                  {product.isOutOfStock && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <Badge className="bg-gray-500 text-white">
+                        Out of Stock
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Add to Cart Button */}
+                  {!product.isOutOfStock && (
+                    <Button
+                      onClick={(e) => handleAddToCart(product, e)}
+                      className="absolute bottom-2 left-2 right-2 bg-brand-gold text-brand-dark hover:bg-brand-gold/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      size="sm"
+                    >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  )}
                 </div>
                 
-                <CardContent className="p-3 md:p-4 lg:p-6">
-                  <h3 className="text-lg md:text-xl lg:text-2xl font-playfair font-semibold text-white mb-1 md:mb-2 lg:mb-3">
-                    {category.name}
-                  </h3>
-                  <p className="text-gray-300 mb-3 md:mb-4 lg:mb-6 leading-relaxed text-xs md:text-sm lg:text-base line-clamp-2">
-                    {category.description}
-                  </p>
-                  <div className="space-y-1.5 md:space-y-2 lg:space-y-3">
-                    <Button 
-                      onClick={() => handleViewProducts(category.name)}
-                      className="btn-gold w-full text-xs md:text-sm lg:text-base py-1.5 md:py-2 lg:py-3"
-                    >
-                      View Products
-                    </Button>
-                    <Button 
-                      onClick={() => handleWhatsApp(category.name)}
-                      variant="outline"
-                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm lg:text-base py-1.5 md:py-2 lg:py-3"
-                    >
-                      Quick Inquiry
-                    </Button>
+                <CardContent className="p-4">
+                  <div className="mb-2">
+                    <h3 className="font-semibold text-white text-lg mb-1 font-montserrat line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-brand-gold text-sm font-medium">
+                      {product.category}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <p className="text-brand-gold font-bold text-lg">
+                      {product.price}
+                    </p>
+                    
+                    {product.sizes && product.sizes.length > 0 && (
+                      <p className="text-gray-400 text-xs">
+                        {product.sizes.length} sizes
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        )}
-        
-        {/* New Product Request Section */}
-        <div className="mt-12 md:mt-16 text-center">
-          <Card className="bg-brand-gray border-brand-gold/20 p-6 md:p-8 mx-auto max-w-4xl">
-            <CardContent className="p-0">
-              <h3 className="text-2xl md:text-3xl font-playfair font-bold text-white mb-3 md:mb-4">
-                🆕 Looking for Something Specific?
-              </h3>
-              <p className="text-base md:text-lg text-gray-300 mb-4 md:mb-6">
-                Can't find what you're looking for? We regularly update our collection with new arrivals. 
-                Contact us to inquire about specific items or request new products!
-              </p>
-              <Button 
-                onClick={handleAddNewProduct}
-                className="btn-gold px-6 md:px-8 py-2 md:py-3"
-              >
-                Request New Products
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Special Offers Section */}
-        <div className="mt-6 md:mt-8 text-center">
-          <Card className="bg-gradient-gold text-brand-dark p-6 md:p-8 mx-auto max-w-4xl">
-            <CardContent className="p-0">
-              <h3 className="text-2xl md:text-3xl font-playfair font-bold mb-3 md:mb-4">
-                🎉 Special Offers Available!
-              </h3>
-              <p className="text-base md:text-lg mb-4 md:mb-6">
-                Get up to 30% off on selected items. Mix and match deals on shirts and pants.
-                Free alteration services for formal wear purchases above Rs. 5000.
-              </p>
-              <Button 
-                onClick={() => handleWhatsApp('Special Offers')}
-                className="bg-brand-dark text-brand-gold hover:bg-brand-gray transition-colors px-6 md:px-8 py-2 md:py-3"
-              >
-                Ask About Offers
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
 
-      {/* Product Modal */}
-      {selectedCategory && (
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-12">
+              <Search className="w-16 h-16 text-brand-gold mx-auto mb-4 opacity-50" />
+              <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
+              <p className="text-gray-400">
+                Try adjusting your search or category filter
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {selectedProduct && (
         <ProductModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          category={selectedCategory}
-          products={groupedProducts[selectedCategory] || []}
+          product={selectedProduct}
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
         />
       )}
-    </section>
+    </>
   );
 };
 

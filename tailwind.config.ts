@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -71,7 +72,9 @@ export default {
 					'gold-dark': '#b8941f',
 					gray: '#64748b',
 					'gray-light': '#94a3b8',
-					'gray-lighter': '#cbd5e1'
+					'gray-lighter': '#cbd5e1',
+					dark: '#0f0f23',
+					darker: '#0a0a1a'
 				}
 			},
 			borderRadius: {
@@ -82,6 +85,7 @@ export default {
 			fontFamily: {
 				'montserrat': ['Montserrat', 'sans-serif'],
 				'poppins': ['Poppins', 'sans-serif'],
+				'playfair': ['Playfair Display', 'serif'],
 			},
 			backgroundImage: {
 				'gradient-gold': 'linear-gradient(135deg, #d4af37 0%, #f4e4a6 50%, #d4af37 100%)',
@@ -133,5 +137,30 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addUtilities }) {
+			const newUtilities = {
+				'.line-clamp-1': {
+					overflow: 'hidden',
+					display: '-webkit-box',
+					'-webkit-box-orient': 'vertical',
+					'-webkit-line-clamp': '1',
+				},
+				'.line-clamp-2': {
+					overflow: 'hidden',
+					display: '-webkit-box',
+					'-webkit-box-orient': 'vertical',
+					'-webkit-line-clamp': '2',
+				},
+				'.line-clamp-3': {
+					overflow: 'hidden',
+					display: '-webkit-box',
+					'-webkit-box-orient': 'vertical',
+					'-webkit-line-clamp': '3',
+				},
+			}
+			addUtilities(newUtilities)
+		}
+	],
 } satisfies Config;
