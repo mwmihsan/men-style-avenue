@@ -82,9 +82,9 @@ const ProductGallery = () => {
           {/* Search and Category Filters */}
           <div className="mb-8 space-y-4">
             <ProductSearch 
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-            />
+                allProducts={products}
+                 categories={categories.filter(cat => cat !== 'All')}
+              />
             
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2 justify-center">
@@ -195,9 +195,10 @@ const ProductGallery = () => {
 
       {selectedProduct && (
         <ProductModal
-          product={selectedProduct}
-          isOpen={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+            isOpen={!!selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            category={selectedProduct?.category || ''}
+            products={selectedProduct ? [selectedProduct] : []}
         />
       )}
     </>
