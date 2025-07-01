@@ -15,6 +15,7 @@ const OrderView = lazy(() => import("./pages/OrderView"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const ProductView = lazy(() => import("./pages/ProductView"));
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,11 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/product/:id" element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <ProductView />
+                </Suspense>
+              } />
               <Route path="/orders" element={
                 <Suspense fallback={<div>Loading...</div>}>
                   <Orders />

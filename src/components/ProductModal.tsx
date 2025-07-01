@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Ruler, ShoppingCart } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { X, Ruler, ShoppingCart, Eye } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SizeGuide from './SizeGuide';
-import ProductReviews from './ProductReviews';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { useCart } from '@/contexts/CartContext';
 
@@ -27,18 +27,17 @@ interface ProductModalProps {
 
 const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps) => {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showReviews, setShowReviews] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const { addToRecentlyViewed } = useRecentlyViewed();
   const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   // Simplified price formatting function - price is already formatted from the hook
   const formatPrice = (price?: string) => {
     return price || 'Contact for Price';
   };
 
-  const handleProductSelect = (product: Product) => {
+  const handleProductView = (product: Product) => {
     // Add to recently viewed
     addToRecentlyViewed({
       id: product.id,
@@ -48,25 +47,16 @@ const ProductModal = ({ isOpen, onClose, category, products }: ProductModalProps
       category: category
     });
 
-    const formattedPrice = formatPrice(product.price);
-    const sizesText = product.sizes && product.sizes.length > 0 
-      ? `\nAvailable Sizes: ${product.sizes.join(', ')}` 
-      : '';
-    
-    const message = `Hello! I'm interested in this ${category} item:
-
-Product: ${product.name}
-${product.price ? `Price: ${formattedPrice}` : ''}${sizesText}
-
-Could you please provide more details about availability and pricing?`;
-    
-    window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
+    // Navigate to product view page
+    navigate(`/product/${product.id}`);
+    onClose();
   };
 
   const handleAddToCart = (product: Product) => {
     if (!product.price) {
-      // If no price, redirect to WhatsApp for inquiry
-      handleProductSelect(product);
+      // If no price, show inquiry message or redirect to contact
+      const message = `Hello! I'm interested in this ${category} item: ${product.name}. Could you please provide pricing information?`;
+      window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
       return;
     }
 
@@ -98,11 +88,6 @@ Could you please provide more details about availability and pricing?`;
     }));
   };
 
-  const handleViewReviews = (product: Product) => {
-    setSelectedProduct(product);
-    setShowReviews(true);
-  };
-
   const handleCategoryInquiry = () => {
     const message = `Hello! I'm interested in your ${category} collection. Could you please share more details about available items, sizes, colors, and pricing?`;
     window.open(`https://wa.me/94778117375?text=${encodeURIComponent(message)}`, '_blank');
@@ -116,34 +101,6 @@ Could you please provide more details about availability and pricing?`;
     'Round Neck T-Shirts',
     'Long-Sleeved T-Shirts'
   ].includes(category);
-
-  if (showReviews && selectedProduct) {
-    return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-gray border-brand-gold/20">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-playfair font-bold text-white flex items-center justify-between">
-              {selectedProduct.name} - Reviews
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => setShowReviews(false)}
-                  className="text-brand-gold hover:bg-brand-gold/20"
-                >
-                  Back to Products
-                </Button>
-                <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-brand-gold/20">
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          
-          <ProductReviews productId={selectedProduct.id} productName={selectedProduct.name} />
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
     <>
@@ -231,18 +188,12 @@ Could you please provide more details about availability and pricing?`;
                       {product.price ? 'Add to Cart' : 'Inquire'}
                     </Button>
                     <Button 
-                      onClick={() => handleProductSelect(product)}
+                      onClick={() => handleProductView(product)}
                       variant="outline"
                       className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm py-1.5 md:py-2"
                     >
-                      WhatsApp Inquiry
-                    </Button>
-                    <Button 
-                      onClick={() => handleViewReviews(product)}
-                      variant="outline"
-                      className="w-full border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs md:text-sm py-1.5 md:py-2"
-                    >
-                      View Reviews
+                      <Eye className="w-3 h-3 mr-1" />
+                      View Details
                     </Button>
                   </div>
                 </CardContent>
