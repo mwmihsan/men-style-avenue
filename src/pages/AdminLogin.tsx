@@ -24,11 +24,21 @@ const AdminLogin = () => {
 
     const result = await login(email, password);
     
-    if (result.success) {
-      navigate('/admin-access-4men');
-    } else {
-      setError(result.error || 'Login failed');
-    }
+   if (result.success) {
+  const adminEmails = [
+    'admin@menstylesavenue.com',
+    'msanan7@gmail.com' // ✅ your email added here
+  ];
+
+  if (adminEmails.includes(email.toLowerCase())) {
+    navigate('/admin-access-4men');
+  } else {
+    setError('Access denied. Admin privileges required.');
+  }
+} else {
+  setError(result.error || 'Login failed');
+}
+
     
     setIsLoading(false);
   };
